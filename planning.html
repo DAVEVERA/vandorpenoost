@@ -2472,8 +2472,28 @@ function initEvents() {
 /* =============================================================
    INIT
 ============================================================= */
+async function autoRestoreBackup() {
+  // Only auto-restore once (when no backup has been loaded yet)
+  if (load('pp_backup_loaded', null)) return;
+  try {
+    const r = await fetch('planner-backup.json');
+    if (!r.ok) return;
+    const data = await r.json();
+    if (data.pp_employees) save('pp_employees', data.pp_employees);
+    if (data.pp_shifts)    save('pp_shifts',    data.pp_shifts);
+    if (data.pp_settings)  save('pp_settings',  data.pp_settings);
+    if (data.pp_dagstart)  save('pp_dagstart',  data.pp_dagstart);
+    if (data.pp_patterns)  save('pp_patterns',  data.pp_patterns);
+    if (data.pp_meetings)  save('pp_meetings',  data.pp_meetings);
+    save('pp_backup_loaded', '2026-03-18');
+    toast('Planning data hersteld vanuit backup ✓');
+    renderAll();
+  } catch (e) { /* fail silently if file not found */ }
+}
+
 function init() {
   seedData();
+  autoRestoreBackup();
 
   // Determine starting week
   const h = parseHash();

@@ -140,94 +140,140 @@
   <main class="main">
 
     <!-- ==========================================
-         NIEUWS — launch card (full app at nieuws/)
+         NIEUWS — Hero photowall + launch card
          ========================================== -->
     <section class="page active" id="page-nieuws" aria-label="Nieuws">
 
-      <div class="page-header">
-        <h1>Nieuws</h1>
-        <p class="page-subtitle">Laatste updates en berichten van Oostendorp</p>
-      </div>
+      <!-- HERO: Dynamic Photowall -->
+      <div class="hero" id="hero">
 
-      <div class="launch-card-wrap">
-        <div class="launch-card">
-          <div class="launch-card-icon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M4 22h16a2 2 0 002-2V7l-5-5H6a2 2 0 00-2 2v2"/>
-              <path d="M14 2v4a2 2 0 002 2h4"/>
-              <path d="M2 15h10M2 11h6M2 19h10"/>
-            </svg>
+        <!-- Background: 6 animated panels -->
+        <div class="hero-wall" id="heroWall">
+
+          <div class="hero-panel hp-1" data-depth="0.5">
+            <div class="hero-panel-bg"></div>
+            <div class="hero-panel-num">01</div>
+            <div class="hero-panel-info">
+              <div class="hero-panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 002-2V7l-5-5H6a2 2 0 00-2 2v2"/><path d="M14 2v4a2 2 0 002 2h4"/><path d="M2 15h10M2 11h6M2 19h10"/></svg></div>
+              <span>Nieuws</span>
+            </div>
           </div>
-          <h2>Nieuws Dashboard</h2>
-          <p>Volledig scherm nieuws display met slideshows, ticker, weer en verkeersinformatie. Inclusief admin beheer voor nieuws en berichten.</p>
-          <a href="nieuws/" class="launch-btn">
-            Open Nieuws Dashboard
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          </a>
-          <p class="launch-hint">Tip: klik 3× op de ticker om het beheerpaneel te openen.</p>
+
+          <div class="hero-panel hp-2" data-depth="0.3">
+            <div class="hero-panel-bg"></div>
+            <div class="hero-panel-num">02</div>
+            <div class="hero-panel-info">
+              <div class="hero-panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+              <span>Planning</span>
+            </div>
+          </div>
+
+          <div class="hero-panel hp-3" data-depth="0.4">
+            <div class="hero-panel-bg"></div>
+            <div class="hero-panel-num">03</div>
+            <div class="hero-panel-info">
+              <div class="hero-panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg></div>
+              <span>RMS</span>
+            </div>
+          </div>
+
+          <div class="hero-panel hp-4" data-depth="0.2">
+            <div class="hero-panel-bg"></div>
+            <div class="hero-panel-num">04</div>
+            <div class="hero-panel-info">
+              <div class="hero-panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><polyline points="2 20 22 20"/></svg></div>
+              <span>Performance</span>
+            </div>
+          </div>
+
+          <div class="hero-panel hp-5" data-depth="0.45">
+            <div class="hero-panel-bg"></div>
+            <div class="hero-panel-num">05</div>
+            <div class="hero-panel-info">
+              <div class="hero-panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+              <span>Roadmap</span>
+            </div>
+          </div>
+
+          <div class="hero-panel hp-6" data-depth="0.35">
+            <div class="hero-panel-bg"></div>
+            <div class="hero-panel-num">06</div>
+            <div class="hero-panel-info">
+              <div class="hero-panel-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div>
+              <span>AskAI</span>
+            </div>
+          </div>
+
+        </div><!-- /.hero-wall -->
+
+        <!-- Center glass overlay with logo + CTA nav -->
+        <div class="hero-center" id="heroCenter">
+          <div class="hero-brand">
+            <svg class="logo-mark" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+              <circle cx="14" cy="14" r="14" fill="#00ACA9"/>
+              <circle cx="14" cy="14" r="6" fill="#ffffff"/>
+            </svg>
+            <span class="hero-brand-text">oostendorp</span>
+          </div>
+          <p class="hero-tagline">Interne portal &mdash; Autogroep</p>
+          <nav class="hero-nav-grid" aria-label="Snelnavigatie">
+            <a href="nieuws/" class="hero-nav-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 22h16a2 2 0 002-2V7l-5-5H6a2 2 0 00-2 2v2"/><path d="M14 2v4a2 2 0 002 2h4"/><path d="M2 15h10M2 11h6M2 19h10"/></svg>
+              <span>Nieuws</span>
+            </a>
+            <a href="planning.html" class="hero-nav-btn">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+              <span>Planning</span>
+            </a>
+            <a href="#rms" class="hero-nav-btn" data-page="rms">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              <span>RMS</span>
+            </a>
+            <a href="#performance" class="hero-nav-btn" data-page="performance">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/><polyline points="2 20 22 20"/></svg>
+              <span>Performance</span>
+            </a>
+            <a href="#roadmap" class="hero-nav-btn" data-page="roadmap">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>Roadmap</span>
+            </a>
+            <a href="#askai" class="hero-nav-btn" data-page="askai">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg>
+              <span>AskAI</span>
+            </a>
+          </nav>
+        </div><!-- /.hero-center -->
+
+        <!-- Scroll hint -->
+        <div class="hero-scroll" aria-hidden="true">
+          <span>Scroll</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><polyline points="6 9 12 15 18 9"/></svg>
+        </div>
+
+      </div><!-- /.hero -->
+
+      <!-- Launch card below hero -->
+      <div class="hero-below">
+        <div class="launch-card-wrap">
+          <div class="launch-card">
+            <div class="launch-card-icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M4 22h16a2 2 0 002-2V7l-5-5H6a2 2 0 00-2 2v2"/>
+                <path d="M14 2v4a2 2 0 002 2h4"/>
+                <path d="M2 15h10M2 11h6M2 19h10"/>
+              </svg>
+            </div>
+            <h2>Nieuws Dashboard</h2>
+            <p>Volledig scherm nieuws display met slideshows, ticker, weer en verkeersinformatie. Inclusief admin beheer voor nieuws en berichten.</p>
+            <a href="nieuws/" class="launch-btn">
+              Open Nieuws Dashboard
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+            <p class="launch-hint">Tip: klik 3× op de ticker om het beheerpaneel te openen.</p>
+          </div>
         </div>
       </div>
 
-      <!-- preview grid kept below launch card -->
-      <div class="news-grid">
-
-        <article class="news-card featured">
-          <div class="news-card-meta">
-            <span class="news-tag-label">Uitgelicht</span>
-            <span class="news-date">18 mrt 2026</span>
-          </div>
-          <h2>Nieuw wagenpark voor Q2 2026</h2>
-          <p>Oostendorp breidt het wagenpark uit met 24 nieuwe voertuigen voor het tweede kwartaal. De nieuwe vloot omvat elektrische en hybride modellen, in lijn met onze duurzaamheidsdoelstellingen.</p>
-          <a href="#" class="read-more">Lees meer
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </article>
-
-        <article class="news-card">
-          <div class="news-card-meta">
-            <span class="news-tag-label">Operationeel</span>
-            <span class="news-date">15 mrt 2026</span>
-          </div>
-          <h2>RMS systeem geüpdatet naar v2.1</h2>
-          <p>Het Resource Management Systeem is bijgewerkt met verbeterde rapportagefuncties, een nieuw voertuigdashboard en snellere zoekfilters.</p>
-          <a href="#" class="read-more">Lees meer
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </article>
-
-        <article class="news-card">
-          <div class="news-card-meta">
-            <span class="news-tag-label">Team</span>
-            <span class="news-date">10 mrt 2026</span>
-          </div>
-          <h2>Nieuwe collega's verwelkomd</h2>
-          <p>We verwelkomen drie nieuwe medewerkers bij de afdelingen sales en operations. Ze starten in april en worden begeleid via het onboarding-programma.</p>
-          <a href="#" class="read-more">Lees meer
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </article>
-
-        <article class="news-card">
-          <div class="news-card-meta">
-            <span class="news-tag-label">Sustainability</span>
-            <span class="news-date">5 mrt 2026</span>
-          </div>
-          <h2>CO₂-doelstellingen Q1 gehaald</h2>
-          <p>Onze vloot heeft in het eerste kwartaal de gestelde CO₂-reductiedoelstellingen gehaald. Een mooie mijlpaal richting onze jaarlijkse -20% doelstelling.</p>
-          <a href="#" class="read-more">Lees meer
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-        </article>
-
-      </div>
     </section>
 
     <!-- ==========================================
@@ -780,6 +826,36 @@
 
   </main>
 
+  <!-- ============================================================
+       GLOBAL NEWS TICKER (fixed bottom — cloned from NIEUWS OOSTENDORP)
+       ============================================================ -->
+  <div class="site-ticker" id="siteTicker" aria-label="Nieuws ticker">
+    <div class="ticker-clock-block">
+      <span class="ticker-clock-loc">UDEN</span>
+      <span class="ticker-clock-time" id="tickerTime">00:00</span>
+    </div>
+    <div class="ticker-pill">
+      <span class="ticker-pill-icon" id="tickerWeatherIcon">🌤️</span>
+      <div class="ticker-pill-text">
+        <span class="ticker-pill-main" id="tickerWeatherTemp">--°</span>
+        <span class="ticker-pill-sub" id="tickerWeatherDesc"></span>
+      </div>
+    </div>
+    <div class="ticker-pill">
+      <span class="ticker-pill-icon">🚗</span>
+      <div class="ticker-pill-text">
+        <span class="ticker-pill-main" id="tickerTrafficCount">Laden...</span>
+        <span class="ticker-pill-sub" id="tickerTrafficRoad"></span>
+      </div>
+    </div>
+    <div class="ticker-sep"></div>
+    <div class="ticker-scroll-wrap">
+      <div class="ticker-scroll" id="tickerScroll"></div>
+    </div>
+    <div class="ticker-badge">LAATSTE NIEUWS</div>
+  </div>
+
   <script src="js/main.js"></script>
+  <script src="js/ticker.js"></script>
 </body>
 </html>

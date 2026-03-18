@@ -872,6 +872,379 @@ input { font-family: var(--font); }
 .launch-hint { font-size: 12px; color: var(--muted-light); font-style: italic; }
 
 /* ================================================
+   HERO — Dynamic Photowall
+   ================================================ */
+
+.page#page-nieuws { padding: 0; }
+
+.hero {
+  position: relative;
+  height: calc(100vh - var(--header-height));
+  min-height: 480px;
+  overflow: hidden;
+  background: #000;
+}
+
+/* ---- Photowall grid ---- */
+.hero-wall {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: repeat(2, 1fr);
+}
+
+/* ---- Individual panels ---- */
+.hero-panel {
+  position: relative;
+  overflow: hidden;
+  border-right: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  opacity: 0;
+  animation: heroPanelIn 1s cubic-bezier(0.22,1,0.36,1) forwards;
+}
+.hero-panel:nth-child(1) { animation-delay: 0.05s; }
+.hero-panel:nth-child(2) { animation-delay: 0.15s; }
+.hero-panel:nth-child(3) { animation-delay: 0.25s; }
+.hero-panel:nth-child(4) { animation-delay: 0.10s; }
+.hero-panel:nth-child(5) { animation-delay: 0.20s; }
+.hero-panel:nth-child(6) { animation-delay: 0.30s; }
+
+@keyframes heroPanelIn {
+  from { opacity: 0; transform: scale(1.06); }
+  to   { opacity: 1; transform: scale(1); }
+}
+
+/* ---- Panel backgrounds (CSS-generated, no images) ---- */
+.hero-panel-bg {
+  position: absolute;
+  inset: -8%;
+  background-size: 220% 220%;
+  will-change: transform;
+  animation: panelFloat linear infinite;
+}
+.hp-1 .hero-panel-bg { background: radial-gradient(ellipse at 30% 40%, rgba(0,172,169,0.35) 0%, transparent 60%), linear-gradient(145deg,#001a1a,#004040); animation-duration: 14s; }
+.hp-2 .hero-panel-bg { background: radial-gradient(ellipse at 70% 60%, rgba(0,172,169,0.12) 0%, transparent 55%), linear-gradient(160deg,#0d1117,#161b22); animation-duration: 18s; }
+.hp-3 .hero-panel-bg { background: radial-gradient(ellipse at 50% 30%, rgba(0,172,169,0.25) 0%, transparent 60%), linear-gradient(130deg,#001515,#002e2e); animation-duration: 12s; animation-delay: -4s; }
+.hp-4 .hero-panel-bg { background: radial-gradient(ellipse at 20% 70%, rgba(0,172,169,0.08) 0%, transparent 50%), linear-gradient(170deg,#080808,#111); animation-duration: 20s; animation-delay: -6s; }
+.hp-5 .hero-panel-bg { background: radial-gradient(ellipse at 60% 40%, rgba(0,172,169,0.22) 0%, transparent 65%), linear-gradient(120deg,#002020,#003535); animation-duration: 16s; animation-delay: -2s; }
+.hp-6 .hero-panel-bg { background: radial-gradient(ellipse at 40% 60%, rgba(0,172,169,0.15) 0%, transparent 55%), linear-gradient(155deg,#050505,#0a1a1a); animation-duration: 22s; animation-delay: -8s; }
+
+@keyframes panelFloat {
+  0%   { background-position: 0% 0%; }
+  33%  { background-position: 100% 50%; }
+  66%  { background-position: 50% 100%; }
+  100% { background-position: 0% 0%; }
+}
+
+/* ---- Panel decorative oversized number ---- */
+.hero-panel-num {
+  position: absolute;
+  bottom: -0.08em;
+  right: -0.02em;
+  font-size: clamp(64px, 9vw, 128px);
+  font-weight: bold;
+  color: rgba(255,255,255,0.035);
+  line-height: 1;
+  pointer-events: none;
+  -webkit-user-select: none;
+  user-select: none;
+  z-index: 1;
+  letter-spacing: -4px;
+  font-family: Arial, sans-serif;
+}
+
+/* ---- Panel hover glow ---- */
+.hero-panel::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(0,172,169,0.1) 0%, transparent 70%);
+  opacity: 0;
+  transition: opacity 0.5s;
+  z-index: 2;
+}
+.hero-panel:hover::after { opacity: 1; }
+
+/* ---- Panel label (icon + name, visible on hover) ---- */
+.hero-panel-info {
+  position: absolute;
+  bottom: 18px;
+  left: 18px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  opacity: 0;
+  transform: translateY(6px);
+  transition: opacity 0.3s, transform 0.3s;
+}
+.hero-panel:hover .hero-panel-info {
+  opacity: 1;
+  transform: translateY(0);
+}
+.hero-panel-icon {
+  width: 28px;
+  height: 28px;
+  color: #00ACA9;
+}
+.hero-panel-icon svg { width: 100%; height: 100%; }
+.hero-panel-info span {
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.6);
+  font-family: Arial, sans-serif;
+}
+
+/* ---- Center glass card ---- */
+.hero-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 20;
+  background: rgba(0,0,0,0.84);
+  -webkit-backdrop-filter: blur(28px) saturate(1.4);
+  backdrop-filter: blur(28px) saturate(1.4);
+  border: 1px solid rgba(255,255,255,0.1);
+  border-radius: 20px;
+  padding: 36px 40px 40px;
+  text-align: center;
+  width: min(480px, 88vw);
+  opacity: 0;
+  animation: heroCenterIn 0.9s cubic-bezier(0.22,1,0.36,1) forwards 0.35s;
+}
+@keyframes heroCenterIn {
+  from { opacity: 0; transform: translate(-50%, -46%); }
+  to   { opacity: 1; transform: translate(-50%, -50%); }
+}
+
+.hero-brand {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 6px;
+}
+.hero-brand .logo-mark { width: 34px; height: 34px; flex-shrink: 0; }
+.hero-brand-text {
+  font-size: 22px;
+  font-weight: bold;
+  color: #fff;
+  letter-spacing: -0.3px;
+  font-family: Arial, sans-serif;
+}
+.hero-tagline {
+  font-size: 11px;
+  color: rgba(255,255,255,0.38);
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  margin: 0 0 26px;
+  font-family: Arial, sans-serif;
+}
+
+/* ---- CTA nav grid (3×2) ---- */
+.hero-nav-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+.hero-nav-btn {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 14px 6px 12px;
+  border-radius: 12px;
+  border: 1px solid rgba(255,255,255,0.1);
+  background: rgba(255,255,255,0.04);
+  color: rgba(255,255,255,0.75);
+  text-decoration: none;
+  font-size: 11px;
+  font-weight: bold;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  transition: background 0.2s, border-color 0.2s, color 0.2s, transform 0.18s;
+  font-family: Arial, sans-serif;
+  cursor: pointer;
+}
+.hero-nav-btn:hover {
+  background: rgba(0,172,169,0.18);
+  border-color: #00ACA9;
+  color: #fff;
+  transform: translateY(-2px);
+}
+.hero-nav-btn svg { width: 22px; height: 22px; color: #00ACA9; }
+
+/* ---- Scroll hint ---- */
+.hero-scroll {
+  position: absolute;
+  bottom: 22px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  color: rgba(255,255,255,0.28);
+  font-size: 10px;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  font-family: Arial, sans-serif;
+  animation: heroScrollBounce 2.2s ease-in-out infinite 1.8s;
+  opacity: 0;
+}
+.hero-scroll svg { width: 16px; height: 16px; }
+@keyframes heroScrollBounce {
+  0%,100% { opacity: 0.28; transform: translateX(-50%) translateY(0); }
+  50%      { opacity: 0.55; transform: translateX(-50%) translateY(5px); }
+}
+
+/* ---- Content below hero ---- */
+.hero-below {
+  padding: 40px 24px 80px;
+}
+@media (min-width: 600px) { .hero-below { padding: 48px 32px 80px; } }
+@media (min-width: 900px) { .hero-below { padding: 56px 48px 96px; } }
+@media (min-width: 1100px) { .hero-below { padding: 64px 64px 100px; } }
+
+/* ---- Mobile hero adjustments ---- */
+@media (max-width: 599px) {
+  .hero-wall { grid-template-columns: repeat(2, 1fr); grid-template-rows: repeat(3, 1fr); }
+  .hero-panel-num { font-size: 48px; }
+  .hero-center { padding: 28px 20px 28px; }
+  .hero-brand-text { font-size: 18px; }
+  .hero-nav-grid { grid-template-columns: repeat(2, 1fr); gap: 7px; }
+  .hero-nav-btn { font-size: 10px; padding: 12px 4px 10px; }
+  .hero-nav-btn svg { width: 18px; height: 18px; }
+}
+
+/* ================================================
+   GLOBAL NEWS TICKER
+   ================================================ */
+
+.site-ticker {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 52px;
+  background: rgba(0,0,0,0.90);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(255,255,255,0.08);
+  display: flex;
+  align-items: center;
+  z-index: 9000;
+  overflow: hidden;
+  font-family: Arial, sans-serif;
+}
+
+.ticker-clock-block {
+  background: #00ACA9;
+  height: 100%;
+  min-width: 100px;
+  padding: 0 16px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  flex-shrink: 0;
+}
+.ticker-clock-loc {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: rgba(255,255,255,0.7);
+  font-weight: bold;
+}
+.ticker-clock-time {
+  font-size: 19px;
+  font-weight: bold;
+  color: #fff;
+  line-height: 1.1;
+}
+
+.ticker-pill {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 0 14px;
+  height: 100%;
+  border-right: 1px solid rgba(255,255,255,0.07);
+  flex-shrink: 0;
+}
+.ticker-pill-icon { font-size: 15px; line-height: 1; }
+.ticker-pill-text { display: flex; flex-direction: column; gap: 1px; }
+.ticker-pill-main { font-size: 13px; font-weight: bold; color: #fff; line-height: 1.1; white-space: nowrap; }
+.ticker-pill-sub  { font-size: 10px; color: rgba(255,255,255,0.42); letter-spacing: 0.5px; text-transform: uppercase; white-space: nowrap; }
+
+.ticker-sep {
+  width: 1px;
+  height: 55%;
+  background: rgba(255,255,255,0.1);
+  flex-shrink: 0;
+  margin: 0 4px;
+}
+
+.ticker-scroll-wrap {
+  flex: 1;
+  overflow: hidden;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.ticker-scroll {
+  display: inline-block;
+  white-space: nowrap;
+  animation: tickerScroll linear infinite;
+  will-change: transform;
+}
+.ticker-scroll-item {
+  display: inline-block;
+  padding: 0 2.5rem;
+  font-size: 13px;
+  font-weight: 500;
+  color: rgba(255,255,255,0.85);
+  letter-spacing: 0.2px;
+}
+.ticker-scroll-sep {
+  color: #00ACA9;
+  font-weight: 300;
+}
+@keyframes tickerScroll {
+  0%   { transform: translate3d(0,0,0); }
+  100% { transform: translate3d(-50%,0,0); }
+}
+
+.ticker-badge {
+  background: rgba(255,255,255,0.05);
+  color: rgba(255,255,255,0.5);
+  height: 100%;
+  padding: 0 14px;
+  display: flex;
+  align-items: center;
+  font-size: 10px;
+  font-weight: bold;
+  letter-spacing: 1.5px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+/* Add bottom padding to all pages to avoid ticker overlap */
+.page { padding-bottom: calc(64px + 52px) !important; }
+
+@media (max-width: 599px) {
+  .ticker-pill  { display: none; }
+  .ticker-sep   { display: none; }
+  .ticker-badge { display: none; }
+  .ticker-clock-block { min-width: 72px; padding: 0 10px; }
+}
+
+/* ================================================
    RESPONSIVE
    ================================================ */
 
