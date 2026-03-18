@@ -102,36 +102,11 @@
   }
   initTickerScroll();
 
-  /* ---- Hero parallax ---- */
-  var heroWall = document.getElementById('heroWall');
-  if (heroWall) {
-    var panels = heroWall.querySelectorAll('.hero-panel');
-    var raf = null;
-    var mx = 0, my = 0;
-
-    document.addEventListener('mousemove', function (e) {
-      mx = (e.clientX / window.innerWidth - 0.5) * 2;
-      my = (e.clientY / window.innerHeight - 0.5) * 2;
-      if (!raf) raf = requestAnimationFrame(applyParallax);
-    });
-
-    function applyParallax() {
-      raf = null;
-      panels.forEach(function (panel) {
-        var depth = parseFloat(panel.dataset.depth) || 0.3;
-        var tx = mx * 18 * depth;
-        var ty = my * 12 * depth;
-        var bg = panel.querySelector('.hero-panel-bg');
-        if (bg) bg.style.transform = 'translate(' + tx + 'px,' + ty + 'px)';
-      });
-    }
-  }
-
-  /* ---- Hero nav-btn SPA routing ---- */
-  document.querySelectorAll('.hero-nav-btn[data-page]').forEach(function (btn) {
-    btn.addEventListener('click', function (e) {
+  /* ---- Hero tile SPA routing ---- */
+  document.querySelectorAll('.hero-tile[data-page]').forEach(function (tile) {
+    tile.addEventListener('click', function (e) {
       e.preventDefault();
-      var page = btn.dataset.page;
+      var page = tile.dataset.page;
       if (page) {
         history.pushState(null, '', '#' + page);
         window.dispatchEvent(new PopStateEvent('popstate'));
