@@ -1,0 +1,2499 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PowerPlanner — VanDorpenOost</title>
+  <style>
+    /* ============================================================
+       RESET & BASE
+    ============================================================ */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html, body { height: 100%; }
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 13px;
+      background: #f0f2f5;
+      color: #1a1a1a;
+      min-height: 100vh;
+    }
+
+    /* ============================================================
+       BACK BUTTON / TOP BAR
+    ============================================================ */
+    #pp-top-bar {
+      background: #fff;
+      border-bottom: 2px solid #00ACA9;
+      padding: 8px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      box-shadow: 0 1px 4px rgba(0,0,0,.12);
+    }
+    #pp-top-bar .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background: none;
+      border: 1px solid #00ACA9;
+      color: #00ACA9;
+      border-radius: 4px;
+      padding: 4px 10px;
+      font-size: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      font-family: Arial, sans-serif;
+      transition: background .15s, color .15s;
+    }
+    #pp-top-bar .back-btn:hover { background: #00ACA9; color: #fff; }
+    #pp-top-bar h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #1a1a1a;
+      flex: 1;
+    }
+
+    /* ============================================================
+       MAIN WRAPPER
+    ============================================================ */
+    #pp-app {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 12px 16px 80px;
+    }
+
+    /* ============================================================
+       BULK TOOLBAR
+    ============================================================ */
+    #pp-bulk-toolbar {
+      display: none;
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 6px;
+      padding: 8px 14px;
+      margin-bottom: 10px;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    #pp-bulk-toolbar.visible { display: flex; }
+    #pp-bulk-toolbar .bulk-count { font-weight: 700; color: #856404; }
+    .pp-btn {
+      display: inline-flex; align-items: center; gap: 4px;
+      padding: 5px 11px;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background: #fff;
+      cursor: pointer;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      transition: background .15s, border-color .15s;
+      white-space: nowrap;
+    }
+    .pp-btn:hover { background: #e9ecef; border-color: #999; }
+    .pp-btn-primary { background: #00ACA9; border-color: #00ACA9; color: #fff; }
+    .pp-btn-primary:hover { background: #008c89; border-color: #008c89; }
+    .pp-btn-danger { background: #dc3545; border-color: #dc3545; color: #fff; }
+    .pp-btn-danger:hover { background: #b02a37; border-color: #b02a37; }
+
+    /* ============================================================
+       WEEK NAV
+    ============================================================ */
+    #pp-week-nav {
+      background: #fff;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+    #pp-week-nav select {
+      padding: 5px 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+      cursor: pointer;
+    }
+    #pp-week-nav .sep {
+      width: 1px; height: 24px;
+      background: #ddd;
+      margin: 0 4px;
+    }
+
+    /* ============================================================
+       STATS BAR
+    ============================================================ */
+    #pp-stats-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+    .stat-card {
+      background: #fff;
+      border-radius: 6px;
+      padding: 10px 18px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-width: 110px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      flex: 1;
+    }
+    .stat-label { font-size: 11px; color: #666; text-transform: uppercase; letter-spacing: .5px; }
+    .stat-value { font-size: 24px; font-weight: 700; color: #00ACA9; line-height: 1.2; }
+
+    /* ============================================================
+       CONFLICTS PANEL
+    ============================================================ */
+    #pp-conflicts {
+      background: #fffbe6;
+      border: 1px solid #fadb14;
+      border-radius: 6px;
+      margin-bottom: 10px;
+      overflow: hidden;
+    }
+    #pp-conflicts .conflicts-header {
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      background: #fff8d4;
+      font-weight: 700;
+    }
+    #pp-conflicts .conflicts-body { padding: 8px 14px; }
+    #pp-conflicts .conflict-item {
+      padding: 4px 0;
+      border-bottom: 1px solid #f0e08a;
+      font-size: 12px;
+      color: #5c4000;
+    }
+    #pp-conflicts .conflict-item:last-child { border-bottom: none; }
+    #pp-conflicts .conflict-error { color: #c0392b; }
+    #pp-conflicts .conflict-warning { color: #856404; }
+    #pp-conflicts.hidden .conflicts-body { display: none; }
+
+    /* ============================================================
+       DAGSTART
+    ============================================================ */
+    #pp-dagstart-section {
+      background: #fff;
+      border-radius: 6px;
+      padding: 10px 14px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+    }
+    #pp-dagstart-section h3 {
+      font-size: 13px;
+      margin-bottom: 8px;
+      color: #1a1a1a;
+    }
+    .dagstart-grid {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+    .dagstart-day {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      flex: 1;
+      min-width: 120px;
+    }
+    .dagstart-day label {
+      font-size: 11px;
+      font-weight: 700;
+      color: #555;
+      text-transform: uppercase;
+    }
+    .dagstart-day select {
+      padding: 4px 6px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 12px;
+      font-family: Arial, sans-serif;
+    }
+
+    /* ============================================================
+       PLANNING GRID
+    ============================================================ */
+    #pp-grid-container {
+      background: #fff;
+      border-radius: 6px;
+      box-shadow: 0 1px 3px rgba(0,0,0,.1);
+      overflow: auto;
+      max-height: calc(100vh - 360px);
+      min-height: 300px;
+    }
+    #pp-planning-table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 800px;
+    }
+    #pp-planning-table th,
+    #pp-planning-table td {
+      border: 1px solid #e0e0e0;
+      padding: 0;
+      vertical-align: top;
+    }
+    #pp-planning-table thead th {
+      background: #2c3e50;
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 10px;
+      white-space: nowrap;
+      position: sticky;
+      top: 0;
+      z-index: 20;
+    }
+    #pp-planning-table thead th.col-employee {
+      position: sticky;
+      top: 0;
+      left: 0;
+      z-index: 30;
+      min-width: 130px;
+      background: #1a252f;
+    }
+    #pp-planning-table thead th.col-day {
+      min-width: 160px;
+      text-align: center;
+    }
+    #pp-planning-table tbody tr:nth-child(even) td { background: #fafafa; }
+    #pp-planning-table tbody tr:hover td { background: #f0f7ff; }
+    .td-employee {
+      position: sticky;
+      left: 0;
+      z-index: 10;
+      background: #fff;
+      min-width: 130px;
+      padding: 8px 10px !important;
+      font-weight: 700;
+      font-size: 12px;
+      color: #2c3e50;
+      border-right: 2px solid #2c3e50 !important;
+    }
+    #pp-planning-table tbody tr:nth-child(even) .td-employee { background: #fafafa; }
+    #pp-planning-table tbody tr:hover .td-employee { background: #f0f7ff; }
+    .td-day {
+      padding: 6px !important;
+      min-width: 160px;
+      max-width: 200px;
+    }
+    .day-cell-inner { display: flex; flex-direction: column; gap: 4px; }
+
+    /* ============================================================
+       SHIFT BLOCKS
+    ============================================================ */
+    .shift-block {
+      border-radius: 4px;
+      padding: 4px 7px;
+      font-size: 11px;
+      position: relative;
+      cursor: pointer;
+      transition: opacity .15s, box-shadow .15s;
+    }
+    .shift-block:hover { opacity: .92; box-shadow: 0 2px 6px rgba(0,0,0,.2); }
+    .shift-block.selected { outline: 2px solid #00ACA9; outline-offset: 1px; }
+    .shift-title { font-weight: 700; font-size: 11px; line-height: 1.3; }
+    .shift-time { font-size: 10px; opacity: .85; }
+    .shift-buddy { font-size: 10px; font-style: italic; }
+    .shift-note-ind { font-size: 10px; opacity: .75; }
+    .shift-actions {
+      display: none;
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      gap: 2px;
+    }
+    .shift-block:hover .shift-actions { display: flex; }
+    .shift-action-btn {
+      background: rgba(0,0,0,.35);
+      border: none;
+      color: #fff;
+      border-radius: 3px;
+      width: 18px;
+      height: 18px;
+      font-size: 10px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      padding: 0;
+      line-height: 1;
+    }
+    .shift-action-btn:hover { background: rgba(0,0,0,.6); }
+    .shift-checkbox {
+      position: absolute;
+      top: 3px;
+      left: 3px;
+      display: none;
+    }
+    .bulk-mode .shift-checkbox { display: block; }
+
+    /* Shift type colours */
+    .shift-inbound          { background: #06a600; color: #000; }
+    .shift-backoffice-chat  { background: #001aff; color: #fff; }
+    .shift-outbound-chat    { background: #001aff; color: #fff; }
+    .shift-training         { background: #ff9900; color: #000; }
+    .shift-verlof           { background: #961414; color: #000; }
+    .shift-vakantie         { background: #53008f; color: #fff; }
+    .shift-verzuim          { background: #961414; color: #000; }
+    .shift-tandarts-dokter  { background: #961414; color: #000; }
+    .shift-meeting          { background: #ff9900; color: #000; }
+    .shift-extern           { background: #ff9900; color: #000; }
+
+    /* ADD SHIFT BUTTON */
+    .add-shift-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 4px;
+      border: 1px dashed #aaa;
+      border-radius: 4px;
+      background: none;
+      color: #888;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      transition: border-color .15s, color .15s, background .15s;
+    }
+    .add-shift-btn:hover { border-color: #00ACA9; color: #00ACA9; background: #e8fffe; }
+
+    /* ============================================================
+       MODAL OVERLAY
+    ============================================================ */
+    .pp-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,.55);
+      z-index: 9999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+    .pp-modal-overlay.hidden { display: none; }
+    .pp-modal {
+      background: #fff;
+      border-radius: 8px;
+      box-shadow: 0 8px 32px rgba(0,0,0,.28);
+      width: 100%;
+      max-width: 540px;
+      max-height: 90vh;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+    .pp-modal.wide { max-width: 780px; }
+    .modal-header {
+      padding: 14px 18px;
+      border-bottom: 1px solid #e0e0e0;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      position: sticky;
+      top: 0;
+      background: #fff;
+      z-index: 1;
+    }
+    .modal-header h2 { font-size: 15px; color: #1a1a1a; }
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #666;
+      line-height: 1;
+      padding: 0 4px;
+    }
+    .modal-close:hover { color: #c0392b; }
+    .modal-body { padding: 16px 18px; flex: 1; }
+    .modal-footer {
+      padding: 12px 18px;
+      border-top: 1px solid #e0e0e0;
+      display: flex;
+      gap: 8px;
+      justify-content: flex-end;
+      position: sticky;
+      bottom: 0;
+      background: #fff;
+    }
+
+    /* ============================================================
+       FORM ELEMENTS
+    ============================================================ */
+    .form-group { margin-bottom: 12px; }
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: 4px;
+      color: #333;
+    }
+    .form-group input[type="text"],
+    .form-group input[type="email"],
+    .form-group input[type="number"],
+    .form-group input[type="time"],
+    .form-group select,
+    .form-group textarea {
+      width: 100%;
+      padding: 6px 9px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      font-size: 13px;
+      font-family: Arial, sans-serif;
+      color: #1a1a1a;
+    }
+    .form-group input:focus,
+    .form-group select:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #00ACA9;
+      box-shadow: 0 0 0 2px rgba(0,172,169,.18);
+    }
+    .form-group textarea { min-height: 60px; resize: vertical; }
+    .form-row { display: flex; gap: 10px; }
+    .form-row .form-group { flex: 1; }
+    .quick-times {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+      margin-top: 4px;
+    }
+    .quick-time-btn {
+      padding: 2px 7px;
+      border: 1px solid #ccc;
+      border-radius: 3px;
+      background: #f5f5f5;
+      font-size: 11px;
+      cursor: pointer;
+      font-family: Arial, sans-serif;
+      transition: background .12s, border-color .12s;
+    }
+    .quick-time-btn:hover { background: #00ACA9; border-color: #00ACA9; color: #fff; }
+    .form-check {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 13px;
+    }
+    .form-check input[type="checkbox"] { width: 15px; height: 15px; cursor: pointer; }
+    .form-info {
+      font-size: 11px;
+      color: #777;
+      margin-top: 3px;
+    }
+
+    /* ============================================================
+       TABS (settings modal)
+    ============================================================ */
+    .pp-tabs {
+      display: flex;
+      gap: 0;
+      border-bottom: 2px solid #e0e0e0;
+      margin-bottom: 16px;
+    }
+    .pp-tab {
+      padding: 8px 16px;
+      cursor: pointer;
+      font-size: 13px;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -2px;
+      color: #555;
+      user-select: none;
+      transition: color .15s;
+    }
+    .pp-tab.active { border-bottom-color: #00ACA9; color: #00ACA9; font-weight: 700; }
+    .pp-tab:hover:not(.active) { color: #00ACA9; }
+    .pp-tab-pane { display: none; }
+    .pp-tab-pane.active { display: block; }
+
+    /* ============================================================
+       EMPLOYEE TABLE (inside settings)
+    ============================================================ */
+    .emp-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+    }
+    .emp-table th {
+      background: #2c3e50;
+      color: #fff;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    .emp-table td {
+      border-bottom: 1px solid #eee;
+      padding: 5px 8px;
+    }
+    .emp-table tr:hover td { background: #f5f9ff; }
+    .emp-inactive { opacity: .5; }
+    .badge {
+      display: inline-block;
+      padding: 1px 6px;
+      border-radius: 10px;
+      font-size: 10px;
+      font-weight: 700;
+    }
+    .badge-active { background: #d4edda; color: #155724; }
+    .badge-inactive { background: #f8d7da; color: #721c24; }
+
+    /* ============================================================
+       PATTERN LIST
+    ============================================================ */
+    .pattern-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 10px;
+      border: 1px solid #e0e0e0;
+      border-radius: 5px;
+      margin-bottom: 6px;
+      background: #fafafa;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .pattern-info { flex: 1; font-size: 12px; }
+    .pattern-confidence {
+      display: inline-block;
+      padding: 1px 7px;
+      border-radius: 10px;
+      background: #e3f2fd;
+      color: #1565c0;
+      font-size: 11px;
+      font-weight: 700;
+    }
+    .pattern-actions { display: flex; gap: 5px; }
+
+    /* ============================================================
+       FLOATING SETTINGS BTN
+    ============================================================ */
+    #pp-settings-fab {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 500;
+      background: #2c3e50;
+      color: #fff;
+      border: none;
+      border-radius: 50px;
+      padding: 10px 18px;
+      font-size: 13px;
+      font-family: Arial, sans-serif;
+      cursor: pointer;
+      box-shadow: 0 4px 12px rgba(0,0,0,.3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: background .15s;
+    }
+    #pp-settings-fab:hover { background: #00ACA9; }
+
+    /* ============================================================
+       TOAST
+    ============================================================ */
+    #pp-toast {
+      position: fixed;
+      bottom: 80px;
+      right: 24px;
+      z-index: 9990;
+      background: #2c3e50;
+      color: #fff;
+      padding: 10px 18px;
+      border-radius: 6px;
+      font-size: 13px;
+      box-shadow: 0 4px 12px rgba(0,0,0,.25);
+      transition: opacity .3s;
+      opacity: 0;
+      pointer-events: none;
+    }
+    #pp-toast.show { opacity: 1; }
+    #pp-toast.success { background: #27ae60; }
+    #pp-toast.error   { background: #e74c3c; }
+    #pp-toast.warning { background: #e67e22; }
+
+    /* ============================================================
+       SETTINGS TOGGLES
+    ============================================================ */
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .toggle-row:last-child { border-bottom: none; }
+    .toggle-label { font-size: 13px; color: #1a1a1a; flex: 1; }
+    .toggle-desc { font-size: 11px; color: #888; margin-top: 2px; }
+    .toggle-switch {
+      position: relative;
+      width: 38px;
+      height: 20px;
+      flex-shrink: 0;
+    }
+    .toggle-switch input { opacity: 0; width: 0; height: 0; }
+    .toggle-slider {
+      position: absolute;
+      cursor: pointer;
+      inset: 0;
+      background: #ccc;
+      border-radius: 20px;
+      transition: background .2s;
+    }
+    .toggle-slider::before {
+      content: '';
+      position: absolute;
+      width: 14px; height: 14px;
+      left: 3px; top: 3px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform .2s;
+    }
+    .toggle-switch input:checked + .toggle-slider { background: #00ACA9; }
+    .toggle-switch input:checked + .toggle-slider::before { transform: translateX(18px); }
+
+    /* ============================================================
+       MISC UTILITIES
+    ============================================================ */
+    .pp-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #2c3e50;
+      margin: 14px 0 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px solid #e0e0e0;
+    }
+    .text-muted { color: #888; font-size: 12px; }
+    .mt-8 { margin-top: 8px; }
+    hr.pp-hr { border: none; border-top: 1px solid #e0e0e0; margin: 12px 0; }
+    .w-100 { width: 100%; }
+    .flex-gap { display: flex; gap: 8px; flex-wrap: wrap; }
+
+    @media (max-width: 640px) {
+      #pp-week-nav { gap: 5px; }
+      .stat-card { min-width: 80px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ============================================================
+     TOP BAR
+============================================================ -->
+<div id="pp-top-bar">
+  <a href="index.html" class="back-btn">&#8592; Terug</a>
+  <h1 id="pp-title">PowerPlanner — Week … (&hellip;)</h1>
+</div>
+
+<!-- ============================================================
+     APP CONTAINER
+============================================================ -->
+<div id="pp-app">
+
+  <!-- Bulk Toolbar -->
+  <div id="pp-bulk-toolbar">
+    <span class="bulk-count" id="bulk-count">0 geselecteerd</span>
+    <button class="pp-btn" id="btn-bulk-apply">&#128221; Toepassen</button>
+    <button class="pp-btn" id="btn-bulk-copy">&#128203; Kopiëren</button>
+    <button class="pp-btn pp-btn-danger" id="btn-bulk-delete">&#128465; Verwijderen</button>
+    <button class="pp-btn" id="btn-bulk-clear">&#10006; Deselecteren</button>
+  </div>
+
+  <!-- Week Navigation -->
+  <div id="pp-week-nav">
+    <button class="pp-btn" id="btn-prev-week">&#8592; Vorige Week</button>
+    <select id="sel-week"></select>
+    <select id="sel-year"></select>
+    <button class="pp-btn" id="btn-next-week">Volgende Week &#8594;</button>
+    <div class="sep"></div>
+    <button class="pp-btn pp-btn-primary" id="btn-save">&#128190; Opslaan</button>
+    <button class="pp-btn" id="btn-populate">&#128260; Vul uit Patronen</button>
+    <button class="pp-btn" id="btn-validate">&#10003; Valideer</button>
+    <button class="pp-btn" id="btn-export">&#128202; Export</button>
+    <div class="sep"></div>
+    <button class="pp-btn" id="btn-copy-week">&#128203; Kopieer Week</button>
+    <button class="pp-btn" id="btn-paste-week">&#128204; Plak Week</button>
+    <button class="pp-btn" id="btn-clear-week">&#128465; Wis Week</button>
+    <button class="pp-btn" id="btn-bulk-select">&#9745; Bulk Select</button>
+  </div>
+
+  <!-- Stats Bar -->
+  <div id="pp-stats-bar">
+    <div class="stat-card">
+      <span class="stat-label">Ingepland</span>
+      <span class="stat-value" id="stat-scheduled">0</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Aanwezig</span>
+      <span class="stat-value" id="stat-present">0</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Afwezig</span>
+      <span class="stat-value" id="stat-absent">0</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-label">Totaal uren</span>
+      <span class="stat-value" id="stat-hours">0</span>
+    </div>
+  </div>
+
+  <!-- Conflicts Panel -->
+  <div id="pp-conflicts" class="hidden">
+    <div class="conflicts-header" id="conflicts-toggle">
+      <span id="conflicts-header-text">&#9888; Conflicten &amp; Waarschuwingen</span>
+      <span id="conflicts-caret">&#9660;</span>
+    </div>
+    <div class="conflicts-body" id="conflicts-body"></div>
+  </div>
+
+  <!-- Dagstart Section -->
+  <div id="pp-dagstart-section">
+    <h3>&#128197; Dagstart Voorzitters</h3>
+    <div class="dagstart-grid" id="dagstart-grid"></div>
+  </div>
+
+  <!-- Planning Grid -->
+  <div id="pp-grid-container">
+    <table id="pp-planning-table">
+      <thead id="pp-table-head"></thead>
+      <tbody id="pp-table-body"></tbody>
+    </table>
+  </div>
+
+</div><!-- /#pp-app -->
+
+<!-- Floating Settings Button -->
+<button id="pp-settings-fab">&#9881;&#65039; Instellingen</button>
+
+<!-- Toast -->
+<div id="pp-toast"></div>
+
+<!-- ============================================================
+     SHIFT MODAL
+============================================================ -->
+<div class="pp-modal-overlay hidden" id="shift-modal-overlay">
+  <div class="pp-modal" id="shift-modal">
+    <div class="modal-header">
+      <h2 id="shift-modal-title">Dienst Toevoegen</h2>
+      <button class="modal-close" data-close="shift-modal-overlay">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="shift-id">
+      <input type="hidden" id="shift-employee-id">
+
+      <div class="form-row">
+        <div class="form-group">
+          <label>Medewerker</label>
+          <input type="text" id="shift-employee-name" readonly>
+        </div>
+        <div class="form-group">
+          <label>Dag</label>
+          <input type="text" id="shift-day-display" readonly>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Type dienst</label>
+        <select id="shift-type">
+          <option value="Inbound">Inbound</option>
+          <option value="Backoffice &amp; Chat">Backoffice &amp; Chat</option>
+          <option value="Outbound &amp; Chat">Outbound &amp; Chat</option>
+          <option value="Training">Training</option>
+          <option value="Verlof">Verlof</option>
+          <option value="Vakantie">Vakantie</option>
+          <option value="Verzuim">Verzuim</option>
+          <option value="Tandarts/Dokter">Tandarts/Dokter</option>
+          <option value="Meeting">Meeting</option>
+          <option value="Extern">Extern</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <div class="form-check">
+          <input type="checkbox" id="shift-full-day">
+          <label for="shift-full-day">Hele dag</label>
+        </div>
+      </div>
+
+      <div id="shift-time-fields">
+        <div class="form-row">
+          <div class="form-group">
+            <label>Starttijd</label>
+            <input type="time" id="shift-start">
+            <div class="quick-times" id="quick-start-times"></div>
+          </div>
+          <div class="form-group">
+            <label>Eindtijd</label>
+            <input type="time" id="shift-end">
+            <div class="quick-times" id="quick-end-times"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Buddy</label>
+        <select id="shift-buddy">
+          <option value="">-- Geen --</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Notitie</label>
+        <textarea id="shift-note" placeholder="Optionele notitie..."></textarea>
+      </div>
+
+      <div class="form-group">
+        <div class="form-check">
+          <input type="checkbox" id="shift-recurring">
+          <label for="shift-recurring">Terugkerend (patroon opslaan)</label>
+        </div>
+        <div class="form-info">Slaat als patroon op voor toekomstige automatische planning.</div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="pp-btn" data-close="shift-modal-overlay">Annuleren</button>
+      <button class="pp-btn pp-btn-primary" id="btn-save-shift">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     SETTINGS MODAL
+============================================================ -->
+<div class="pp-modal-overlay hidden" id="settings-modal-overlay">
+  <div class="pp-modal wide" id="settings-modal">
+    <div class="modal-header">
+      <h2>Instellingen</h2>
+      <button class="modal-close" data-close="settings-modal-overlay">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div class="pp-tabs">
+        <div class="pp-tab active" data-tab="tab-regels">Regels</div>
+        <div class="pp-tab" data-tab="tab-medewerkers">Medewerkers</div>
+        <div class="pp-tab" data-tab="tab-dagstart">Dagstart</div>
+        <div class="pp-tab" data-tab="tab-geavanceerd">Geavanceerd</div>
+      </div>
+
+      <!-- TAB: Regels -->
+      <div class="pp-tab-pane active" id="tab-regels">
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Maandagochtend Regel</div>
+            <div class="toggle-desc">Iedereen heeft Inbound 08:00–09:30 op maandag</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="setting-monday-rule">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="toggle-row">
+          <div>
+            <div class="toggle-label">Beheerdag Vereist</div>
+            <div class="toggle-desc">Elke medewerker minstens 4 uur Backoffice/Outbound/Training per week</div>
+          </div>
+          <label class="toggle-switch">
+            <input type="checkbox" id="setting-admin-day">
+            <span class="toggle-slider"></span>
+          </label>
+        </div>
+        <div class="form-group mt-8">
+          <label>Meeting interval (weken)</label>
+          <input type="number" id="setting-meeting-interval" min="1" max="12" style="width:80px">
+        </div>
+        <div class="form-group">
+          <label>Minimum bezetting (Inbound)</label>
+          <input type="number" id="setting-coverage-min" min="1" max="20" style="width:80px">
+        </div>
+      </div>
+
+      <!-- TAB: Medewerkers -->
+      <div class="pp-tab-pane" id="tab-medewerkers">
+        <div class="flex-gap" style="margin-bottom:10px;">
+          <button class="pp-btn pp-btn-primary" id="btn-add-employee">+ Medewerker Toevoegen</button>
+        </div>
+        <table class="emp-table">
+          <thead>
+            <tr>
+              <th>Naam</th>
+              <th>E-mail</th>
+              <th>Contract uren</th>
+              <th>Status</th>
+              <th>Acties</th>
+            </tr>
+          </thead>
+          <tbody id="emp-table-body"></tbody>
+        </table>
+      </div>
+
+      <!-- TAB: Dagstart -->
+      <div class="pp-tab-pane" id="tab-dagstart">
+        <p class="text-muted" style="margin-bottom:10px;">Stel de standaard dagstart-voorzitter in per dag.</p>
+        <div id="settings-dagstart-grid"></div>
+      </div>
+
+      <!-- TAB: Geavanceerd -->
+      <div class="pp-tab-pane" id="tab-geavanceerd">
+        <div class="pp-section-title">Patroonherkenning</div>
+        <div class="flex-gap">
+          <button class="pp-btn" id="btn-detect-patterns">&#128269; Detecteer Patronen</button>
+          <button class="pp-btn" id="btn-review-patterns">&#128203; Bekijk Patronen</button>
+        </div>
+        <hr class="pp-hr">
+        <div class="pp-section-title">Back-up &amp; Herstel</div>
+        <div class="flex-gap">
+          <button class="pp-btn" id="btn-backup">&#128190; Exporteer Back-up</button>
+          <button class="pp-btn" id="btn-restore">&#128194; Importeer Back-up</button>
+          <input type="file" id="restore-file" accept=".json" style="display:none">
+        </div>
+        <hr class="pp-hr">
+        <div class="pp-section-title" style="color:#c0392b;">Gevaarlijke Acties</div>
+        <div class="flex-gap">
+          <button class="pp-btn pp-btn-danger" id="btn-reset-all">&#9888;&#65039; Alle Data Wissen</button>
+        </div>
+      </div>
+
+    </div>
+    <div class="modal-footer">
+      <button class="pp-btn" data-close="settings-modal-overlay">Sluiten</button>
+      <button class="pp-btn pp-btn-primary" id="btn-save-settings">Instellingen Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     EMPLOYEE MODAL
+============================================================ -->
+<div class="pp-modal-overlay hidden" id="emp-modal-overlay">
+  <div class="pp-modal" id="emp-modal">
+    <div class="modal-header">
+      <h2 id="emp-modal-title">Medewerker Toevoegen</h2>
+      <button class="modal-close" data-close="emp-modal-overlay">&times;</button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="emp-id">
+      <div class="form-group">
+        <label>Naam *</label>
+        <input type="text" id="emp-name" placeholder="Voornaam">
+      </div>
+      <div class="form-group">
+        <label>E-mailadres</label>
+        <input type="email" id="emp-email" placeholder="naam@bedrijf.nl">
+      </div>
+      <div class="form-group">
+        <label>Contract uren/week</label>
+        <input type="number" id="emp-hours" min="0" max="40" value="32">
+      </div>
+      <div class="form-group">
+        <div class="form-check">
+          <input type="checkbox" id="emp-active" checked>
+          <label for="emp-active">Actief</label>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="pp-btn" data-close="emp-modal-overlay">Annuleren</button>
+      <button class="pp-btn pp-btn-primary" id="btn-save-employee">Opslaan</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     PATTERNS MODAL
+============================================================ -->
+<div class="pp-modal-overlay hidden" id="patterns-modal-overlay">
+  <div class="pp-modal wide" id="patterns-modal">
+    <div class="modal-header">
+      <h2>Patroonbeheer</h2>
+      <button class="modal-close" data-close="patterns-modal-overlay">&times;</button>
+    </div>
+    <div class="modal-body">
+      <div id="patterns-list"></div>
+    </div>
+    <div class="modal-footer">
+      <button class="pp-btn" data-close="patterns-modal-overlay">Sluiten</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============================================================
+     JAVASCRIPT
+============================================================ -->
+<script>
+'use strict';
+
+/* =============================================================
+   CONSTANTS
+============================================================= */
+const SHIFT_TYPES = [
+  'Inbound',
+  'Backoffice & Chat',
+  'Outbound & Chat',
+  'Training',
+  'Verlof',
+  'Vakantie',
+  'Verzuim',
+  'Tandarts/Dokter',
+  'Meeting',
+  'Extern'
+];
+
+const ABSENCE_TYPES = ['Verlof', 'Vakantie', 'Verzuim', 'Tandarts/Dokter'];
+
+const SHIFT_CLASSES = {
+  'Inbound':           'shift-inbound',
+  'Backoffice & Chat': 'shift-backoffice-chat',
+  'Outbound & Chat':   'shift-outbound-chat',
+  'Training':          'shift-training',
+  'Verlof':            'shift-verlof',
+  'Vakantie':          'shift-vakantie',
+  'Verzuim':           'shift-verzuim',
+  'Tandarts/Dokter':   'shift-tandarts-dokter',
+  'Meeting':           'shift-meeting',
+  'Extern':            'shift-extern'
+};
+
+const DAYS = ['maandag','dinsdag','woensdag','donderdag','vrijdag'];
+const DAYS_NL = ['Maandag','Dinsdag','Woensdag','Donderdag','Vrijdag'];
+
+const DEFAULT_EMPLOYEES = [
+  'Dave','Annebel','Audrey','Bianca','Carola',
+  'Chayenne','Dewi','Dianne','Joost','Karin',
+  'Kelly','Nancy','Nikita','Shelly','Wilma'
+];
+
+const DEFAULT_SETTINGS = {
+  mondayMorningRule: true,
+  adminDayRequired: true,
+  meetingIntervalWeeks: 2,
+  peakHours: ['08:00-09:30','16:00-17:00'],
+  coverageMinimum: 5,
+  dagstartDefaults: {
+    maandag: 'Dave',
+    dinsdag: 'Kelly',
+    woensdag: 'Joost',
+    donderdag: 'Shelly',
+    vrijdag: 'Chayenne'
+  }
+};
+
+const QUICK_START = ['07:00','07:30','08:00','08:30','09:00','10:00','12:00','13:00'];
+const QUICK_END   = ['13:00','14:00','15:30','16:00','16:30','17:00','17:30','18:00'];
+
+/* =============================================================
+   STATE
+============================================================= */
+let currentWeek, currentYear;
+let bulkMode = false;
+let bulkSelected = new Set(); // shift IDs
+
+/* =============================================================
+   STORAGE HELPERS
+============================================================= */
+function load(key, def) {
+  try {
+    const v = localStorage.getItem(key);
+    return v !== null ? JSON.parse(v) : def;
+  } catch { return def; }
+}
+function save(key, val) {
+  localStorage.setItem(key, JSON.stringify(val));
+}
+function genId() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 8);
+}
+
+/* =============================================================
+   SEED ON FIRST LOAD
+============================================================= */
+function seedData() {
+  let employees = load('pp_employees', null);
+  if (!employees) {
+    employees = DEFAULT_EMPLOYEES.map(name => ({
+      id: genId(),
+      name,
+      email: '',
+      contractHours: 32,
+      isActive: true,
+      lastMeetingDate: null,
+      nextMeetingDate: null
+    }));
+    save('pp_employees', employees);
+  }
+  if (!load('pp_settings', null)) {
+    save('pp_settings', DEFAULT_SETTINGS);
+  }
+  if (!load('pp_shifts', null))   save('pp_shifts', []);
+  if (!load('pp_patterns', null)) save('pp_patterns', []);
+  if (!load('pp_dagstart', null)) save('pp_dagstart', {});
+  if (!load('pp_meetings', null)) save('pp_meetings', []);
+}
+
+/* =============================================================
+   WEEK HELPERS
+============================================================= */
+function getISOWeek(date) {
+  const d = new Date(Date.UTC(date.getFullYear(), date.getMonth(), date.getDate()));
+  const dayNum = d.getUTCDay() || 7;
+  d.setUTCDate(d.getUTCDate() + 4 - dayNum);
+  const yearStart = new Date(Date.UTC(d.getUTCFullYear(), 0, 1));
+  return { week: Math.ceil((((d - yearStart) / 86400000) + 1) / 7), year: d.getUTCFullYear() };
+}
+
+function getWeekDates(week, year) {
+  // Returns Mon-Fri Date objects for a given ISO week
+  const jan4 = new Date(Date.UTC(year, 0, 4));
+  const dayOfJan4 = jan4.getUTCDay() || 7;
+  const monday = new Date(jan4);
+  monday.setUTCDate(jan4.getUTCDate() - (dayOfJan4 - 1) + (week - 1) * 7);
+  return DAYS.map((_, i) => {
+    const d = new Date(monday);
+    d.setUTCDate(monday.getUTCDate() + i);
+    return d;
+  });
+}
+
+function formatDate(d) {
+  return d.toLocaleDateString('nl-NL', { day: '2-digit', month: '2-digit', timeZone: 'UTC' });
+}
+
+function prevWeek(w, y) {
+  if (w <= 1) return { week: 52, year: y - 1 };
+  return { week: w - 1, year: y };
+}
+function nextWeek(w, y) {
+  if (w >= 52) return { week: 1, year: y + 1 };
+  return { week: w + 1, year: y };
+}
+
+/* =============================================================
+   URL HASH
+============================================================= */
+function parseHash() {
+  const h = window.location.hash.replace('#', '');
+  const m = h.match(/^W(\d+)-(\d{4})$/);
+  if (m) return { week: parseInt(m[1]), year: parseInt(m[2]) };
+  return null;
+}
+function setHash(w, y) {
+  history.replaceState(null, '', `#W${w}-${y}`);
+}
+
+/* =============================================================
+   TOAST
+============================================================= */
+let toastTimer;
+function toast(msg, type = 'success') {
+  const el = document.getElementById('pp-toast');
+  el.textContent = msg;
+  el.className = 'show ' + type;
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => { el.className = ''; }, 3000);
+}
+
+/* =============================================================
+   RENDER ALL
+============================================================= */
+function renderAll() {
+  document.getElementById('pp-title').textContent =
+    `PowerPlanner — Week ${currentWeek} (${currentYear})`;
+  setHash(currentWeek, currentYear);
+  populateWeekNav();
+  renderGrid();
+  renderStats();
+  renderConflicts();
+  renderDagstart();
+}
+
+/* =============================================================
+   POPULATE WEEK NAV DROPDOWNS
+============================================================= */
+function populateWeekNav() {
+  const selW = document.getElementById('sel-week');
+  const selY = document.getElementById('sel-year');
+
+  if (!selW.options.length) {
+    for (let w = 1; w <= 52; w++) {
+      const o = new Option(`Week ${w}`, w);
+      selW.add(o);
+    }
+  }
+  selW.value = currentWeek;
+
+  if (!selY.options.length) {
+    for (let y = currentYear - 2; y <= currentYear + 2; y++) {
+      const o = new Option(y, y);
+      selY.add(o);
+    }
+  }
+  // Make sure the current year is in the list
+  let found = false;
+  for (const o of selY.options) if (parseInt(o.value) === currentYear) { found = true; break; }
+  if (!found) { selY.add(new Option(currentYear, currentYear)); }
+  selY.value = currentYear;
+}
+
+/* =============================================================
+   RENDER GRID
+============================================================= */
+function renderGrid() {
+  const employees = load('pp_employees', []).filter(e => e.isActive);
+  const shifts    = load('pp_shifts', []);
+  const weekDates = getWeekDates(currentWeek, currentYear);
+
+  // Head
+  const head = document.getElementById('pp-table-head');
+  head.innerHTML = '';
+  const headRow = document.createElement('tr');
+  const thEmp = document.createElement('th');
+  thEmp.className = 'col-employee';
+  thEmp.textContent = 'Medewerker';
+  headRow.appendChild(thEmp);
+  weekDates.forEach((d, i) => {
+    const th = document.createElement('th');
+    th.className = 'col-day';
+    th.innerHTML = `${DAYS_NL[i]}<br><small style="font-weight:400;opacity:.75">${formatDate(d)}</small>`;
+    headRow.appendChild(th);
+  });
+  head.appendChild(headRow);
+
+  // Body
+  const body = document.getElementById('pp-table-body');
+  body.innerHTML = '';
+
+  // Dave first, then rest alphabetically
+  const dave = employees.find(e => e.name.toLowerCase() === 'dave');
+  const rest  = employees.filter(e => e.name.toLowerCase() !== 'dave')
+                         .sort((a,b) => a.name.localeCompare(b.name));
+  const ordered = dave ? [dave, ...rest] : rest;
+
+  ordered.forEach(emp => {
+    const tr = document.createElement('tr');
+    tr.dataset.employeeId = emp.id;
+
+    const tdEmp = document.createElement('td');
+    tdEmp.className = 'td-employee';
+    tdEmp.textContent = emp.name;
+    if (emp.name.toLowerCase() === 'dave') {
+      tdEmp.innerHTML += '<br><small style="color:#00ACA9;font-size:10px">Teamleider</small>';
+    }
+    tr.appendChild(tdEmp);
+
+    DAYS.forEach((day, di) => {
+      const td = document.createElement('td');
+      td.className = 'td-day';
+      td.dataset.employeeId = emp.id;
+      td.dataset.day = day;
+
+      const inner = document.createElement('div');
+      inner.className = 'day-cell-inner';
+
+      // Shifts for this employee+day+week
+      const dayShifts = shifts.filter(s =>
+        s.employeeId === emp.id &&
+        s.dayOfWeek === day &&
+        s.weekNumber === currentWeek &&
+        s.year === currentYear
+      );
+
+      dayShifts.forEach(sh => {
+        inner.appendChild(buildShiftBlock(sh, emp));
+      });
+
+      // Add button
+      const addBtn = document.createElement('button');
+      addBtn.className = 'add-shift-btn';
+      addBtn.textContent = '+ Toevoegen';
+      addBtn.dataset.employeeId = emp.id;
+      addBtn.dataset.employeeName = emp.name;
+      addBtn.dataset.day = day;
+      addBtn.addEventListener('click', () => openShiftModal(null, emp.id, emp.name, day));
+      inner.appendChild(addBtn);
+
+      td.appendChild(inner);
+      tr.appendChild(td);
+    });
+
+    body.appendChild(tr);
+  });
+
+  // Apply bulk mode class
+  if (bulkMode) body.classList.add('bulk-mode');
+  else body.classList.remove('bulk-mode');
+}
+
+function buildShiftBlock(sh, emp) {
+  const div = document.createElement('div');
+  div.className = 'shift-block ' + (SHIFT_CLASSES[sh.shiftType] || '');
+  div.dataset.shiftId = sh.id;
+  if (bulkSelected.has(sh.id)) div.classList.add('selected');
+
+  // Checkbox for bulk
+  const cb = document.createElement('input');
+  cb.type = 'checkbox';
+  cb.className = 'shift-checkbox';
+  cb.checked = bulkSelected.has(sh.id);
+  cb.addEventListener('change', () => toggleBulkShift(sh.id, cb.checked));
+  div.appendChild(cb);
+
+  // Title
+  const title = document.createElement('div');
+  title.className = 'shift-title';
+  title.textContent = sh.shiftType;
+  div.appendChild(title);
+
+  if (!sh.fullDay && sh.startTime && sh.endTime) {
+    const t = document.createElement('div');
+    t.className = 'shift-time';
+    t.textContent = sh.startTime.slice(0,5) + ' – ' + sh.endTime.slice(0,5);
+    div.appendChild(t);
+  }
+  if (sh.buddy) {
+    const b = document.createElement('div');
+    b.className = 'shift-buddy';
+    b.textContent = '& ' + sh.buddy;
+    div.appendChild(b);
+  }
+  if (sh.note) {
+    const n = document.createElement('div');
+    n.className = 'shift-note-ind';
+    n.textContent = sh.note;
+    div.appendChild(n);
+  }
+
+  // Actions
+  const actions = document.createElement('div');
+  actions.className = 'shift-actions';
+
+  const editBtn = document.createElement('button');
+  editBtn.className = 'shift-action-btn';
+  editBtn.title = 'Bewerken';
+  editBtn.textContent = '✎';
+  editBtn.addEventListener('click', e => { e.stopPropagation(); openShiftModal(sh.id, sh.employeeId, sh.employeeName, sh.dayOfWeek); });
+  actions.appendChild(editBtn);
+
+  const delBtn = document.createElement('button');
+  delBtn.className = 'shift-action-btn';
+  delBtn.title = 'Verwijderen';
+  delBtn.textContent = '×';
+  delBtn.addEventListener('click', e => { e.stopPropagation(); deleteShift(sh.id); });
+  actions.appendChild(delBtn);
+
+  div.appendChild(actions);
+
+  // Click in bulk mode = toggle select
+  div.addEventListener('click', () => {
+    if (bulkMode) {
+      const newState = !bulkSelected.has(sh.id);
+      toggleBulkShift(sh.id, newState);
+    }
+  });
+
+  return div;
+}
+
+/* =============================================================
+   RENDER STATS
+============================================================= */
+function renderStats() {
+  const shifts = load('pp_shifts', []).filter(s =>
+    s.weekNumber === currentWeek && s.year === currentYear
+  );
+  const absent  = shifts.filter(s => ABSENCE_TYPES.includes(s.shiftType));
+  const present = shifts.filter(s => !ABSENCE_TYPES.includes(s.shiftType));
+
+  let totalHours = 0;
+  shifts.forEach(s => {
+    if (s.fullDay) { totalHours += 8; }
+    else if (s.startTime && s.endTime) {
+      const [sh, sm] = s.startTime.split(':').map(Number);
+      const [eh, em] = s.endTime.split(':').map(Number);
+      const h = (eh * 60 + em - sh * 60 - sm) / 60;
+      if (h > 0) totalHours += h;
+    }
+  });
+
+  document.getElementById('stat-scheduled').textContent = shifts.length;
+  document.getElementById('stat-present').textContent   = present.length;
+  document.getElementById('stat-absent').textContent    = absent.length;
+  document.getElementById('stat-hours').textContent     = Math.round(totalHours * 10) / 10;
+}
+
+/* =============================================================
+   RENDER CONFLICTS
+============================================================= */
+function renderConflicts() {
+  const panel = document.getElementById('pp-conflicts');
+  const body  = document.getElementById('conflicts-body');
+  const header = document.getElementById('conflicts-header-text');
+  body.innerHTML = '';
+
+  const items = collectConflicts();
+  if (!items.length) {
+    panel.classList.add('hidden');
+    return;
+  }
+  panel.classList.remove('hidden');
+  header.textContent = `⚠ ${items.length} Conflicten & Waarschuwingen`;
+
+  items.forEach(item => {
+    const div = document.createElement('div');
+    div.className = 'conflict-item ' + (item.type === 'error' ? 'conflict-error' : 'conflict-warning');
+    div.textContent = (item.type === 'error' ? '⛔ ' : '⚠ ') + item.message;
+    body.appendChild(div);
+  });
+}
+
+function collectConflicts() {
+  const shifts   = load('pp_shifts', []).filter(s =>
+    s.weekNumber === currentWeek && s.year === currentYear
+  );
+  const employees = load('pp_employees', []).filter(e => e.isActive);
+  const settings  = load('pp_settings', DEFAULT_SETTINGS);
+  const items = [];
+
+  // 1. Overlapping shifts per employee per day
+  employees.forEach(emp => {
+    DAYS.forEach(day => {
+      const dayShifts = shifts.filter(s => s.employeeId === emp.id && s.dayOfWeek === day && !s.fullDay && s.startTime && s.endTime);
+      for (let i = 0; i < dayShifts.length; i++) {
+        for (let j = i + 1; j < dayShifts.length; j++) {
+          const a = dayShifts[i], b = dayShifts[j];
+          const aS = timeToMin(a.startTime), aE = timeToMin(a.endTime);
+          const bS = timeToMin(b.startTime), bE = timeToMin(b.endTime);
+          if (aS < bE && bS < aE) {
+            items.push({ type: 'error', message: `${emp.name} heeft overlappende diensten op ${day}: ${a.shiftType}(${a.startTime}–${a.endTime}) & ${b.shiftType}(${b.startTime}–${b.endTime})` });
+          }
+        }
+      }
+    });
+  });
+
+  // 2. Monday morning rule
+  if (settings.mondayMorningRule) {
+    employees.forEach(emp => {
+      const mondayInbound = shifts.find(s =>
+        s.employeeId === emp.id &&
+        s.dayOfWeek === 'maandag' &&
+        s.shiftType === 'Inbound' &&
+        s.startTime === '08:00' &&
+        s.endTime === '09:30'
+      );
+      if (!mondayInbound) {
+        items.push({ type: 'warning', message: `${emp.name}: Maandagochtend Inbound 08:00–09:30 ontbreekt` });
+      }
+    });
+  }
+
+  // 3. Admin day required
+  if (settings.adminDayRequired) {
+    const adminTypes = ['Backoffice & Chat','Outbound & Chat','Training'];
+    employees.forEach(emp => {
+      const empShifts = shifts.filter(s => s.employeeId === emp.id && adminTypes.includes(s.shiftType));
+      let adminHours = 0;
+      empShifts.forEach(s => {
+        if (s.fullDay) { adminHours += 8; }
+        else if (s.startTime && s.endTime) {
+          adminHours += (timeToMin(s.endTime) - timeToMin(s.startTime)) / 60;
+        }
+      });
+      if (adminHours < 4) {
+        items.push({ type: 'warning', message: `${emp.name}: Minder dan 4 uur Backoffice/Outbound/Training (${Math.round(adminHours * 10)/10} uur)` });
+      }
+    });
+  }
+
+  // 4. Peak coverage (≥5 Inbound during 08:00-09:30 and 16:00-17:00 each day)
+  const minCov = settings.coverageMinimum || 5;
+  DAYS.forEach(day => {
+    const peakSlots = [{ s: '08:00', e: '09:30' }, { s: '16:00', e: '17:00' }];
+    peakSlots.forEach(slot => {
+      const covered = shifts.filter(s =>
+        s.dayOfWeek === day &&
+        s.shiftType === 'Inbound' &&
+        !s.fullDay && s.startTime && s.endTime &&
+        timeToMin(s.startTime) <= timeToMin(slot.s) &&
+        timeToMin(s.endTime)   >= timeToMin(slot.e)
+      ).length;
+      if (covered < minCov) {
+        items.push({ type: 'warning', message: `${DAYS_NL[DAYS.indexOf(day)]} ${slot.s}–${slot.e}: slechts ${covered}/${minCov} Inbound medewerkers` });
+      }
+    });
+  });
+
+  return items;
+}
+
+function timeToMin(t) {
+  if (!t) return 0;
+  const [h, m] = t.split(':').map(Number);
+  return h * 60 + m;
+}
+
+/* =============================================================
+   RENDER DAGSTART
+============================================================= */
+function renderDagstart() {
+  const grid      = document.getElementById('dagstart-grid');
+  const employees = load('pp_employees', []).filter(e => e.isActive);
+  const dagstart  = load('pp_dagstart', {});
+  const settings  = load('pp_settings', DEFAULT_SETTINGS);
+  grid.innerHTML  = '';
+
+  DAYS.forEach((day, i) => {
+    const key   = `W${currentWeek}-${currentYear}-${day}`;
+    const saved = dagstart[key] || settings.dagstartDefaults[day] || '';
+
+    const wrapper = document.createElement('div');
+    wrapper.className = 'dagstart-day';
+
+    const lbl = document.createElement('label');
+    lbl.textContent = DAYS_NL[i];
+    wrapper.appendChild(lbl);
+
+    const sel = document.createElement('select');
+    const emptyOpt = document.createElement('option');
+    emptyOpt.value = ''; emptyOpt.textContent = '-- Selecteer --';
+    sel.appendChild(emptyOpt);
+    employees.forEach(emp => {
+      const o = document.createElement('option');
+      o.value = emp.name; o.textContent = emp.name;
+      if (emp.name === saved) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.addEventListener('change', () => saveDagstart(day, sel.value));
+    wrapper.appendChild(sel);
+    grid.appendChild(wrapper);
+  });
+}
+
+/* =============================================================
+   SAVE DAGSTART
+============================================================= */
+function saveDagstart(day, name) {
+  const key = `W${currentWeek}-${currentYear}-${day}`;
+  const ds  = load('pp_dagstart', {});
+  ds[key]   = name;
+  save('pp_dagstart', ds);
+  toast(`Dagstart ${day} opgeslagen: ${name || '(geen)'}`);
+}
+
+/* =============================================================
+   OPEN SHIFT MODAL
+============================================================= */
+function openShiftModal(shiftId, employeeId, employeeName, dayOfWeek) {
+  const overlay  = document.getElementById('shift-modal-overlay');
+  const employees = load('pp_employees', []).filter(e => e.isActive);
+  overlay.classList.remove('hidden');
+
+  document.getElementById('shift-id').value            = shiftId || '';
+  document.getElementById('shift-employee-id').value   = employeeId;
+  document.getElementById('shift-employee-name').value = employeeName;
+  document.getElementById('shift-day-display').value   = DAYS_NL[DAYS.indexOf(dayOfWeek)] || dayOfWeek;
+
+  // Buddy dropdown
+  const buddySel = document.getElementById('shift-buddy');
+  buddySel.innerHTML = '<option value="">-- Geen --</option>';
+  employees.filter(e => e.id !== employeeId).forEach(e => {
+    const o = new Option(e.name, e.name);
+    buddySel.appendChild(o);
+  });
+
+  // Populate quick times
+  buildQuickTimes('quick-start-times', QUICK_START, 'shift-start');
+  buildQuickTimes('quick-end-times',   QUICK_END,   'shift-end');
+
+  if (shiftId) {
+    // Edit mode
+    document.getElementById('shift-modal-title').textContent = 'Dienst Bewerken';
+    const shifts = load('pp_shifts', []);
+    const sh = shifts.find(s => s.id === shiftId);
+    if (sh) {
+      document.getElementById('shift-type').value      = sh.shiftType;
+      document.getElementById('shift-start').value     = sh.startTime || '';
+      document.getElementById('shift-end').value       = sh.endTime   || '';
+      document.getElementById('shift-full-day').checked = !!sh.fullDay;
+      document.getElementById('shift-buddy').value     = sh.buddy || '';
+      document.getElementById('shift-note').value      = sh.note  || '';
+      document.getElementById('shift-recurring').checked = false;
+      toggleTimeFields();
+    }
+  } else {
+    // Add mode
+    document.getElementById('shift-modal-title').textContent = 'Dienst Toevoegen';
+    document.getElementById('shift-type').value      = 'Inbound';
+    document.getElementById('shift-start').value     = '08:00';
+    document.getElementById('shift-end').value       = '17:00';
+    document.getElementById('shift-full-day').checked = false;
+    document.getElementById('shift-buddy').value     = '';
+    document.getElementById('shift-note').value      = '';
+    document.getElementById('shift-recurring').checked = false;
+    toggleTimeFields();
+  }
+}
+
+function buildQuickTimes(containerId, times, inputId) {
+  const container = document.getElementById(containerId);
+  container.innerHTML = '';
+  times.forEach(t => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'quick-time-btn';
+    btn.textContent = t;
+    btn.addEventListener('click', () => {
+      document.getElementById(inputId).value = t;
+    });
+    container.appendChild(btn);
+  });
+}
+
+function toggleTimeFields() {
+  const fd  = document.getElementById('shift-full-day').checked;
+  document.getElementById('shift-time-fields').style.display = fd ? 'none' : '';
+}
+
+/* =============================================================
+   SAVE SHIFT
+============================================================= */
+function saveShift() {
+  const shiftId    = document.getElementById('shift-id').value;
+  const employeeId = document.getElementById('shift-employee-id').value;
+  const employeeName = document.getElementById('shift-employee-name').value;
+  const dayDisplay = document.getElementById('shift-day-display').value;
+  const dayOfWeek  = DAYS[DAYS_NL.indexOf(dayDisplay)] || dayDisplay.toLowerCase();
+
+  const shiftType  = document.getElementById('shift-type').value;
+  const fullDay    = document.getElementById('shift-full-day').checked;
+  const startTime  = document.getElementById('shift-start').value;
+  const endTime    = document.getElementById('shift-end').value;
+  const buddy      = document.getElementById('shift-buddy').value;
+  const note       = document.getElementById('shift-note').value.trim();
+  const recurring  = document.getElementById('shift-recurring').checked;
+
+  // Validation
+  if (!fullDay && startTime && endTime && timeToMin(endTime) <= timeToMin(startTime)) {
+    toast('Eindtijd moet na starttijd zijn.', 'error'); return;
+  }
+
+  // Overlap check (exclude the shift being edited)
+  if (!fullDay && startTime && endTime) {
+    const allShifts = load('pp_shifts', []);
+    const same = allShifts.filter(s =>
+      s.employeeId === employeeId &&
+      s.dayOfWeek === dayOfWeek &&
+      s.weekNumber === currentWeek &&
+      s.year === currentYear &&
+      s.id !== shiftId &&
+      !s.fullDay && s.startTime && s.endTime
+    );
+    for (const s of same) {
+      if (timeToMin(startTime) < timeToMin(s.endTime) && timeToMin(endTime) > timeToMin(s.startTime)) {
+        toast(`Overlapping met ${s.shiftType} (${s.startTime}–${s.endTime})`, 'error');
+        return;
+      }
+    }
+  }
+
+  let shifts = load('pp_shifts', []);
+
+  if (shiftId) {
+    const idx = shifts.findIndex(s => s.id === shiftId);
+    if (idx !== -1) {
+      shifts[idx] = { ...shifts[idx], shiftType, fullDay, startTime: fullDay ? '' : startTime, endTime: fullDay ? '' : endTime, buddy, note };
+    }
+    toast('Dienst bijgewerkt.');
+  } else {
+    const newShift = {
+      id: genId(), employeeId, employeeName,
+      weekNumber: currentWeek, year: currentYear,
+      dayOfWeek, shiftType,
+      startTime: fullDay ? '' : startTime,
+      endTime: fullDay ? '' : endTime,
+      fullDay, buddy, note
+    };
+    shifts.push(newShift);
+    toast('Dienst toegevoegd.');
+  }
+
+  save('pp_shifts', shifts);
+
+  if (recurring) {
+    savePattern(employeeId, employeeName, dayOfWeek, shiftType, startTime, endTime);
+  }
+
+  document.getElementById('shift-modal-overlay').classList.add('hidden');
+  renderAll();
+}
+
+/* =============================================================
+   DELETE SHIFT
+============================================================= */
+function deleteShift(id) {
+  if (!confirm('Dienst verwijderen?')) return;
+  let shifts = load('pp_shifts', []);
+  shifts = shifts.filter(s => s.id !== id);
+  save('pp_shifts', shifts);
+  bulkSelected.delete(id);
+  toast('Dienst verwijderd.', 'warning');
+  renderAll();
+}
+
+/* =============================================================
+   VALIDATE WEEK
+============================================================= */
+function validateWeek() {
+  renderConflicts();
+  const conflicts = document.getElementById('pp-conflicts');
+  const items = collectConflicts();
+  if (!items.length) {
+    toast('Geen conflicten gevonden!', 'success');
+  } else {
+    conflicts.classList.remove('hidden');
+    conflicts.querySelector('.conflicts-body').style.display = '';
+    conflicts.classList.remove('hidden');
+    toast(`${items.length} conflict(en) gevonden.`, 'warning');
+  }
+}
+
+/* =============================================================
+   COPY / PASTE / CLEAR WEEK
+============================================================= */
+function copyWeek() {
+  const shifts = load('pp_shifts', []).filter(s =>
+    s.weekNumber === currentWeek && s.year === currentYear
+  );
+  save('pp_clipboard', { week: currentWeek, year: currentYear, shifts });
+  toast(`Week ${currentWeek} gekopieerd (${shifts.length} diensten).`);
+}
+
+function pasteWeek() {
+  const clipboard = load('pp_clipboard', null);
+  if (!clipboard || !clipboard.shifts || !clipboard.shifts.length) {
+    toast('Klembord is leeg.', 'warning'); return;
+  }
+  if (!confirm(`Plak ${clipboard.shifts.length} diensten van week ${clipboard.week} naar week ${currentWeek}? Bestaande diensten worden gewist.`)) return;
+
+  let shifts = load('pp_shifts', []);
+  shifts = shifts.filter(s => !(s.weekNumber === currentWeek && s.year === currentYear));
+  const newShifts = clipboard.shifts.map(s => ({
+    ...s,
+    id: genId(),
+    weekNumber: currentWeek,
+    year: currentYear
+  }));
+  shifts = shifts.concat(newShifts);
+  save('pp_shifts', shifts);
+  toast(`${newShifts.length} diensten geplakt.`);
+  renderAll();
+}
+
+function clearWeek() {
+  const shifts = load('pp_shifts', []).filter(s =>
+    s.weekNumber === currentWeek && s.year === currentYear
+  );
+  if (!shifts.length) { toast('Geen diensten om te wissen.', 'warning'); return; }
+  if (!confirm(`Alle ${shifts.length} diensten van week ${currentWeek} wissen?`)) return;
+  const remaining = load('pp_shifts', []).filter(s =>
+    !(s.weekNumber === currentWeek && s.year === currentYear)
+  );
+  save('pp_shifts', remaining);
+  toast(`Week ${currentWeek} gewist.`, 'warning');
+  renderAll();
+}
+
+/* =============================================================
+   DETECT PATTERNS
+============================================================= */
+function detectPatterns() {
+  const allShifts = load('pp_shifts', []);
+  const employees = load('pp_employees', []).filter(e => e.isActive);
+  const map = {}; // key = empId+day+type+start → count
+
+  // Look at shifts from the last 4 weeks relative to current week
+  const targetWeeks = [];
+  let w = currentWeek, y = currentYear;
+  for (let i = 0; i < 4; i++) {
+    const p = prevWeek(w, y);
+    targetWeeks.push({ week: p.week, year: p.year });
+    w = p.week; y = p.year;
+  }
+
+  const relevant = allShifts.filter(s =>
+    targetWeeks.some(tw => tw.week === s.weekNumber && tw.year === s.year)
+  );
+
+  relevant.forEach(s => {
+    const key = `${s.employeeId}|${s.dayOfWeek}|${s.shiftType}|${s.startTime}`;
+    if (!map[key]) map[key] = { count: 0, sample: s };
+    map[key].count++;
+  });
+
+  let patterns = load('pp_patterns', []);
+
+  Object.entries(map).forEach(([key, data]) => {
+    if (data.count < 3) return;
+    const s = data.sample;
+    const existing = patterns.find(p =>
+      p.employeeId === s.employeeId &&
+      p.dayOfWeek  === s.dayOfWeek  &&
+      p.shiftType  === s.shiftType  &&
+      p.startTime  === s.startTime
+    );
+    if (!existing) {
+      patterns.push({
+        id: genId(),
+        employeeId:   s.employeeId,
+        employeeName: s.employeeName,
+        dayOfWeek:    s.dayOfWeek,
+        shiftType:    s.shiftType,
+        startTime:    s.startTime,
+        endTime:      s.endTime,
+        confidenceScore: Math.round((data.count / 4) * 100) / 100,
+        isApproved: false,
+        isActive: true
+      });
+    } else {
+      existing.confidenceScore = Math.round((data.count / 4) * 100) / 100;
+    }
+  });
+
+  save('pp_patterns', patterns);
+  toast(`Patronen gedetecteerd. ${patterns.length} totaal.`);
+}
+
+/* =============================================================
+   POPULATE FROM PATTERNS
+============================================================= */
+function populateFromPatterns() {
+  const patterns  = load('pp_patterns', []).filter(p => p.isApproved && p.isActive);
+  if (!patterns.length) {
+    toast('Geen goedgekeurde patronen gevonden.', 'warning'); return;
+  }
+  let shifts = load('pp_shifts', []);
+  let added = 0;
+
+  patterns.forEach(p => {
+    const exists = shifts.some(s =>
+      s.employeeId  === p.employeeId  &&
+      s.dayOfWeek   === p.dayOfWeek   &&
+      s.shiftType   === p.shiftType   &&
+      s.weekNumber  === currentWeek   &&
+      s.year        === currentYear
+    );
+    if (!exists) {
+      shifts.push({
+        id: genId(),
+        employeeId:   p.employeeId,
+        employeeName: p.employeeName,
+        weekNumber:   currentWeek,
+        year:         currentYear,
+        dayOfWeek:    p.dayOfWeek,
+        shiftType:    p.shiftType,
+        startTime:    p.startTime,
+        endTime:      p.endTime,
+        fullDay:      false,
+        buddy:        '',
+        note:         '(patroon)'
+      });
+      added++;
+    }
+  });
+
+  save('pp_shifts', shifts);
+  toast(`${added} diensten toegevoegd vanuit patronen.`);
+  renderAll();
+}
+
+/* =============================================================
+   SAVE PATTERN
+============================================================= */
+function savePattern(employeeId, employeeName, dayOfWeek, shiftType, startTime, endTime) {
+  let patterns = load('pp_patterns', []);
+  const exists = patterns.find(p =>
+    p.employeeId === employeeId &&
+    p.dayOfWeek  === dayOfWeek  &&
+    p.shiftType  === shiftType  &&
+    p.startTime  === startTime
+  );
+  if (!exists) {
+    patterns.push({
+      id: genId(),
+      employeeId, employeeName, dayOfWeek, shiftType, startTime, endTime,
+      confidenceScore: 1,
+      isApproved: true,
+      isActive: true
+    });
+    save('pp_patterns', patterns);
+    toast('Patroon opgeslagen.');
+  }
+}
+
+/* =============================================================
+   EXPORT CSV
+============================================================= */
+function exportCSV() {
+  const shifts = load('pp_shifts', []).filter(s =>
+    s.weekNumber === currentWeek && s.year === currentYear
+  );
+  if (!shifts.length) { toast('Geen diensten om te exporteren.', 'warning'); return; }
+
+  const rows = [
+    ['Medewerker','Week','Jaar','Dag','Type','Start','Eind','Hele dag','Buddy','Notitie']
+  ];
+  shifts.forEach(s => {
+    rows.push([
+      s.employeeName, s.weekNumber, s.year, s.dayOfWeek,
+      s.shiftType, s.startTime || '', s.endTime || '',
+      s.fullDay ? 'Ja' : 'Nee',
+      s.buddy || '', s.note || ''
+    ]);
+  });
+
+  const csv = rows.map(r => r.map(c => `"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `planning_week${currentWeek}_${currentYear}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('CSV geëxporteerd.');
+}
+
+/* =============================================================
+   BULK MODE
+============================================================= */
+function toggleBulkMode() {
+  bulkMode = !bulkMode;
+  bulkSelected.clear();
+  updateBulkToolbar();
+  renderGrid();
+}
+
+function toggleBulkShift(id, selected) {
+  if (selected) bulkSelected.add(id);
+  else bulkSelected.delete(id);
+  updateBulkToolbar();
+  // Update visual
+  const block = document.querySelector(`.shift-block[data-shift-id="${id}"]`);
+  if (block) {
+    block.classList.toggle('selected', selected);
+    const cb = block.querySelector('.shift-checkbox');
+    if (cb) cb.checked = selected;
+  }
+}
+
+function updateBulkToolbar() {
+  const tb = document.getElementById('pp-bulk-toolbar');
+  const ct = document.getElementById('bulk-count');
+  if (bulkMode) {
+    tb.classList.add('visible');
+    ct.textContent = `${bulkSelected.size} geselecteerd`;
+  } else {
+    tb.classList.remove('visible');
+  }
+}
+
+function bulkDelete() {
+  if (!bulkSelected.size) { toast('Niets geselecteerd.', 'warning'); return; }
+  if (!confirm(`${bulkSelected.size} dienst(en) verwijderen?`)) return;
+  let shifts = load('pp_shifts', []);
+  shifts = shifts.filter(s => !bulkSelected.has(s.id));
+  save('pp_shifts', shifts);
+  bulkSelected.clear();
+  updateBulkToolbar();
+  toast('Geselecteerde diensten verwijderd.', 'warning');
+  renderAll();
+}
+
+function bulkCopy() {
+  if (!bulkSelected.size) { toast('Niets geselecteerd.', 'warning'); return; }
+  const shifts = load('pp_shifts', []).filter(s => bulkSelected.has(s.id));
+  save('pp_clipboard', { week: currentWeek, year: currentYear, shifts });
+  toast(`${shifts.length} diensten naar klembord gekopieerd.`);
+}
+
+/* =============================================================
+   NAVIGATION
+============================================================= */
+function goToWeek(week, year) {
+  if (week < 1) { year--; week = 52; }
+  if (week > 52) { year++; week = 1; }
+  currentWeek = week;
+  currentYear = year;
+  renderAll();
+}
+
+/* =============================================================
+   SETTINGS
+============================================================= */
+function openSettings() {
+  const settings = load('pp_settings', DEFAULT_SETTINGS);
+  document.getElementById('setting-monday-rule').checked     = !!settings.mondayMorningRule;
+  document.getElementById('setting-admin-day').checked       = !!settings.adminDayRequired;
+  document.getElementById('setting-meeting-interval').value  = settings.meetingIntervalWeeks || 2;
+  document.getElementById('setting-coverage-min').value      = settings.coverageMinimum || 5;
+
+  renderEmpTable();
+  renderSettingsDagstart();
+
+  document.getElementById('settings-modal-overlay').classList.remove('hidden');
+}
+
+function saveSettings() {
+  const settings = load('pp_settings', DEFAULT_SETTINGS);
+  settings.mondayMorningRule    = document.getElementById('setting-monday-rule').checked;
+  settings.adminDayRequired     = document.getElementById('setting-admin-day').checked;
+  settings.meetingIntervalWeeks = parseInt(document.getElementById('setting-meeting-interval').value) || 2;
+  settings.coverageMinimum      = parseInt(document.getElementById('setting-coverage-min').value) || 5;
+  save('pp_settings', settings);
+  document.getElementById('settings-modal-overlay').classList.add('hidden');
+  toast('Instellingen opgeslagen.');
+  renderAll();
+}
+
+/* =============================================================
+   EMPLOYEE TABLE
+============================================================= */
+function renderEmpTable() {
+  const employees = load('pp_employees', []);
+  const tbody = document.getElementById('emp-table-body');
+  tbody.innerHTML = '';
+  employees.sort((a,b) => a.name.localeCompare(b.name)).forEach(emp => {
+    const tr = document.createElement('tr');
+    if (!emp.isActive) tr.classList.add('emp-inactive');
+    tr.innerHTML = `
+      <td><strong>${esc(emp.name)}</strong></td>
+      <td>${esc(emp.email || '')}</td>
+      <td>${emp.contractHours || 0} u/w</td>
+      <td><span class="badge ${emp.isActive ? 'badge-active' : 'badge-inactive'}">${emp.isActive ? 'Actief' : 'Inactief'}</span></td>
+      <td>
+        <button class="pp-btn" style="padding:2px 7px;font-size:11px;" data-edit-emp="${emp.id}">✎ Bewerken</button>
+        <button class="pp-btn" style="padding:2px 7px;font-size:11px;" data-toggle-emp="${emp.id}">${emp.isActive ? 'Deactiveer' : 'Activeer'}</button>
+      </td>
+    `;
+    tbody.appendChild(tr);
+  });
+
+  tbody.querySelectorAll('[data-edit-emp]').forEach(btn => {
+    btn.addEventListener('click', () => openEmpModal(btn.dataset.editEmp));
+  });
+  tbody.querySelectorAll('[data-toggle-emp]').forEach(btn => {
+    btn.addEventListener('click', () => toggleEmployee(btn.dataset.toggleEmp));
+  });
+}
+
+function esc(str) {
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+function openEmpModal(empId) {
+  const employees = load('pp_employees', []);
+  const emp = empId ? employees.find(e => e.id === empId) : null;
+  document.getElementById('emp-modal-title').textContent = emp ? 'Medewerker Bewerken' : 'Medewerker Toevoegen';
+  document.getElementById('emp-id').value      = emp ? emp.id : '';
+  document.getElementById('emp-name').value    = emp ? emp.name : '';
+  document.getElementById('emp-email').value   = emp ? emp.email || '' : '';
+  document.getElementById('emp-hours').value   = emp ? emp.contractHours || 32 : 32;
+  document.getElementById('emp-active').checked = emp ? !!emp.isActive : true;
+  document.getElementById('emp-modal-overlay').classList.remove('hidden');
+}
+
+function saveEmployee() {
+  const id    = document.getElementById('emp-id').value;
+  const name  = document.getElementById('emp-name').value.trim();
+  const email = document.getElementById('emp-email').value.trim();
+  const hours = parseInt(document.getElementById('emp-hours').value) || 32;
+  const active = document.getElementById('emp-active').checked;
+
+  if (!name) { toast('Naam is verplicht.', 'error'); return; }
+
+  let employees = load('pp_employees', []);
+  if (id) {
+    const idx = employees.findIndex(e => e.id === id);
+    if (idx !== -1) employees[idx] = { ...employees[idx], name, email, contractHours: hours, isActive: active };
+  } else {
+    employees.push({ id: genId(), name, email, contractHours: hours, isActive: active, lastMeetingDate: null, nextMeetingDate: null });
+  }
+  save('pp_employees', employees);
+  document.getElementById('emp-modal-overlay').classList.add('hidden');
+  toast('Medewerker opgeslagen.');
+  renderEmpTable();
+  renderAll();
+}
+
+function toggleEmployee(empId) {
+  let employees = load('pp_employees', []);
+  const idx = employees.findIndex(e => e.id === empId);
+  if (idx !== -1) {
+    employees[idx].isActive = !employees[idx].isActive;
+    save('pp_employees', employees);
+    renderEmpTable();
+    renderAll();
+    toast(`${employees[idx].name} ${employees[idx].isActive ? 'geactiveerd' : 'gedeactiveerd'}.`);
+  }
+}
+
+/* =============================================================
+   SETTINGS DAGSTART TAB
+============================================================= */
+function renderSettingsDagstart() {
+  const settings  = load('pp_settings', DEFAULT_SETTINGS);
+  const employees = load('pp_employees', []).filter(e => e.isActive);
+  const grid = document.getElementById('settings-dagstart-grid');
+  grid.innerHTML = '';
+
+  DAYS.forEach((day, i) => {
+    const wrapper = document.createElement('div');
+    wrapper.style.cssText = 'display:flex;align-items:center;gap:12px;padding:6px 0;border-bottom:1px solid #f0f0f0;';
+
+    const lbl = document.createElement('label');
+    lbl.style.cssText = 'min-width:90px;font-weight:700;font-size:12px;';
+    lbl.textContent = DAYS_NL[i];
+    wrapper.appendChild(lbl);
+
+    const sel = document.createElement('select');
+    sel.style.cssText = 'padding:4px 6px;border:1px solid #ccc;border-radius:4px;font-size:12px;font-family:Arial,sans-serif;';
+    const emptyOpt = new Option('-- Geen --', '');
+    sel.appendChild(emptyOpt);
+    employees.forEach(emp => {
+      const o = new Option(emp.name, emp.name);
+      if (emp.name === (settings.dagstartDefaults[day] || '')) o.selected = true;
+      sel.appendChild(o);
+    });
+    sel.dataset.day = day;
+    wrapper.appendChild(sel);
+    grid.appendChild(wrapper);
+  });
+}
+
+function saveSettingsDagstart() {
+  const settings = load('pp_settings', DEFAULT_SETTINGS);
+  document.querySelectorAll('#settings-dagstart-grid select').forEach(sel => {
+    settings.dagstartDefaults[sel.dataset.day] = sel.value;
+  });
+  save('pp_settings', settings);
+}
+
+/* =============================================================
+   PATTERN REVIEW MODAL
+============================================================= */
+function openPatternModal() {
+  const patterns  = load('pp_patterns', []);
+  const container = document.getElementById('patterns-list');
+  container.innerHTML = '';
+
+  if (!patterns.length) {
+    container.innerHTML = '<p class="text-muted">Geen patronen beschikbaar. Gebruik \'Detecteer Patronen\' eerst.</p>';
+    document.getElementById('patterns-modal-overlay').classList.remove('hidden');
+    return;
+  }
+
+  patterns.sort((a,b) => b.confidenceScore - a.confidenceScore).forEach(p => {
+    const div = document.createElement('div');
+    div.className = 'pattern-item';
+    div.innerHTML = `
+      <div class="pattern-info">
+        <strong>${esc(p.employeeName)}</strong> — ${DAYS_NL[DAYS.indexOf(p.dayOfWeek)] || p.dayOfWeek}:
+        ${esc(p.shiftType)} ${p.startTime ? p.startTime + '–' + p.endTime : ''}
+        <br><span class="pattern-confidence">Betrouwbaarheid: ${Math.round(p.confidenceScore * 100)}%</span>
+        <span class="badge ${p.isApproved ? 'badge-active' : 'badge-inactive'}" style="margin-left:6px;">${p.isApproved ? 'Goedgekeurd' : 'In afwachting'}</span>
+        <span class="badge ${p.isActive ? 'badge-active' : 'badge-inactive'}" style="margin-left:4px;">${p.isActive ? 'Actief' : 'Inactief'}</span>
+      </div>
+      <div class="pattern-actions">
+        <button class="pp-btn" data-approve-pattern="${p.id}">${p.isApproved ? 'Intrekken' : 'Goedkeuren'}</button>
+        <button class="pp-btn" data-toggle-pattern="${p.id}">${p.isActive ? 'Deactiveer' : 'Activeer'}</button>
+        <button class="pp-btn pp-btn-danger" data-delete-pattern="${p.id}">Verwijder</button>
+      </div>
+    `;
+    container.appendChild(div);
+  });
+
+  container.querySelectorAll('[data-approve-pattern]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      togglePatternApproval(btn.dataset.approvePattern);
+      openPatternModal();
+    });
+  });
+  container.querySelectorAll('[data-toggle-pattern]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      togglePatternActive(btn.dataset.togglePattern);
+      openPatternModal();
+    });
+  });
+  container.querySelectorAll('[data-delete-pattern]').forEach(btn => {
+    btn.addEventListener('click', () => {
+      deletePattern(btn.dataset.deletePattern);
+      openPatternModal();
+    });
+  });
+
+  document.getElementById('patterns-modal-overlay').classList.remove('hidden');
+}
+
+function togglePatternApproval(id) {
+  let patterns = load('pp_patterns', []);
+  const p = patterns.find(x => x.id === id);
+  if (p) { p.isApproved = !p.isApproved; save('pp_patterns', patterns); }
+}
+function togglePatternActive(id) {
+  let patterns = load('pp_patterns', []);
+  const p = patterns.find(x => x.id === id);
+  if (p) { p.isActive = !p.isActive; save('pp_patterns', patterns); }
+}
+function deletePattern(id) {
+  if (!confirm('Patroon verwijderen?')) return;
+  let patterns = load('pp_patterns', []).filter(p => p.id !== id);
+  save('pp_patterns', patterns);
+}
+
+/* =============================================================
+   BACKUP & RESTORE
+============================================================= */
+function backupData() {
+  const data = {
+    pp_employees: load('pp_employees', []),
+    pp_shifts:    load('pp_shifts', []),
+    pp_patterns:  load('pp_patterns', []),
+    pp_dagstart:  load('pp_dagstart', {}),
+    pp_settings:  load('pp_settings', DEFAULT_SETTINGS),
+    pp_meetings:  load('pp_meetings', []),
+    exportedAt: new Date().toISOString()
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement('a');
+  a.href = url;
+  a.download = `powerplanner_backup_${new Date().toISOString().slice(0,10)}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+  toast('Back-up geëxporteerd.');
+}
+
+function restoreData(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (data.pp_employees) save('pp_employees', data.pp_employees);
+      if (data.pp_shifts)    save('pp_shifts',    data.pp_shifts);
+      if (data.pp_patterns)  save('pp_patterns',  data.pp_patterns);
+      if (data.pp_dagstart)  save('pp_dagstart',  data.pp_dagstart);
+      if (data.pp_settings)  save('pp_settings',  data.pp_settings);
+      if (data.pp_meetings)  save('pp_meetings',  data.pp_meetings);
+      toast('Back-up hersteld!');
+      renderAll();
+    } catch {
+      toast('Ongeldige back-up file.', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function resetAll() {
+  if (!confirm('ALLE planning data wissen? Dit kan niet ongedaan worden gemaakt!')) return;
+  if (!confirm('Zeker weten? Alle diensten, patronen en instellingen worden gewist.')) return;
+  ['pp_employees','pp_shifts','pp_patterns','pp_dagstart','pp_settings','pp_meetings','pp_clipboard'].forEach(k => localStorage.removeItem(k));
+  seedData();
+  toast('Alle data gewist en opnieuw geladen.', 'warning');
+  document.getElementById('settings-modal-overlay').classList.add('hidden');
+  renderAll();
+}
+
+/* =============================================================
+   MODAL HELPERS
+============================================================= */
+function closeModal(overlayId) {
+  document.getElementById(overlayId).classList.add('hidden');
+}
+
+function initModalClose() {
+  document.querySelectorAll('[data-close]').forEach(btn => {
+    btn.addEventListener('click', () => closeModal(btn.dataset.close));
+  });
+  document.querySelectorAll('.pp-modal-overlay').forEach(overlay => {
+    overlay.addEventListener('click', e => {
+      if (e.target === overlay) overlay.classList.add('hidden');
+    });
+  });
+}
+
+/* =============================================================
+   TAB SWITCHING
+============================================================= */
+function initTabs() {
+  document.querySelectorAll('.pp-tab').forEach(tab => {
+    tab.addEventListener('click', () => {
+      const parent = tab.closest('.pp-modal') || tab.closest('.pp-modal-body') || document;
+      parent.querySelectorAll('.pp-tab').forEach(t => t.classList.remove('active'));
+      parent.querySelectorAll('.pp-tab-pane').forEach(p => p.classList.remove('active'));
+      tab.classList.add('active');
+      const target = document.getElementById(tab.dataset.tab);
+      if (target) target.classList.add('active');
+
+      // Refresh tab content on activation
+      if (tab.dataset.tab === 'tab-medewerkers') renderEmpTable();
+      if (tab.dataset.tab === 'tab-dagstart') renderSettingsDagstart();
+    });
+  });
+}
+
+/* =============================================================
+   CONFLICTS COLLAPSE
+============================================================= */
+function initConflictsToggle() {
+  document.getElementById('conflicts-toggle').addEventListener('click', () => {
+    const panel = document.getElementById('pp-conflicts');
+    const body  = document.getElementById('conflicts-body');
+    const caret = document.getElementById('conflicts-caret');
+    const collapsed = body.style.display === 'none';
+    body.style.display = collapsed ? '' : 'none';
+    caret.textContent  = collapsed ? '▾' : '▸';
+  });
+}
+
+/* =============================================================
+   EVENT LISTENERS
+============================================================= */
+function initEvents() {
+  // Week nav
+  document.getElementById('btn-prev-week').addEventListener('click', () => {
+    const p = prevWeek(currentWeek, currentYear);
+    goToWeek(p.week, p.year);
+  });
+  document.getElementById('btn-next-week').addEventListener('click', () => {
+    const n = nextWeek(currentWeek, currentYear);
+    goToWeek(n.week, n.year);
+  });
+  document.getElementById('sel-week').addEventListener('change', e => {
+    goToWeek(parseInt(e.target.value), currentYear);
+  });
+  document.getElementById('sel-year').addEventListener('change', e => {
+    goToWeek(currentWeek, parseInt(e.target.value));
+  });
+
+  // Toolbar buttons
+  document.getElementById('btn-save').addEventListener('click', () => {
+    save('pp_shifts', load('pp_shifts', [])); // no-op but confirms persistence
+    toast('Planning opgeslagen!');
+  });
+  document.getElementById('btn-populate').addEventListener('click', populateFromPatterns);
+  document.getElementById('btn-validate').addEventListener('click', validateWeek);
+  document.getElementById('btn-export').addEventListener('click', exportCSV);
+  document.getElementById('btn-copy-week').addEventListener('click', copyWeek);
+  document.getElementById('btn-paste-week').addEventListener('click', pasteWeek);
+  document.getElementById('btn-clear-week').addEventListener('click', clearWeek);
+  document.getElementById('btn-bulk-select').addEventListener('click', toggleBulkMode);
+
+  // Bulk toolbar
+  document.getElementById('btn-bulk-apply').addEventListener('click', () => {
+    if (!bulkSelected.size) { toast('Niets geselecteerd.', 'warning'); return; }
+    // Open a dialog to apply a shift type to all selected
+    const type = prompt('Dienst type toepassen op ' + bulkSelected.size + ' geselecteerde diensten:\n\n' + SHIFT_TYPES.join(', '));
+    if (!type || !SHIFT_TYPES.includes(type)) { toast('Ongeldig type.', 'error'); return; }
+    let shifts = load('pp_shifts', []);
+    bulkSelected.forEach(id => {
+      const idx = shifts.findIndex(s => s.id === id);
+      if (idx !== -1) shifts[idx].shiftType = type;
+    });
+    save('pp_shifts', shifts);
+    toast(`Type "${type}" toegepast op ${bulkSelected.size} diensten.`);
+    renderAll();
+  });
+  document.getElementById('btn-bulk-copy').addEventListener('click', bulkCopy);
+  document.getElementById('btn-bulk-delete').addEventListener('click', bulkDelete);
+  document.getElementById('btn-bulk-clear').addEventListener('click', () => {
+    bulkSelected.clear();
+    bulkMode = false;
+    updateBulkToolbar();
+    renderGrid();
+  });
+
+  // Shift modal
+  document.getElementById('btn-save-shift').addEventListener('click', saveShift);
+  document.getElementById('shift-full-day').addEventListener('change', toggleTimeFields);
+
+  // Settings FAB
+  document.getElementById('pp-settings-fab').addEventListener('click', openSettings);
+  document.getElementById('btn-save-settings').addEventListener('click', () => {
+    saveSettingsDagstart();
+    saveSettings();
+  });
+
+  // Employee modal
+  document.getElementById('btn-add-employee').addEventListener('click', () => openEmpModal(null));
+  document.getElementById('btn-save-employee').addEventListener('click', saveEmployee);
+
+  // Advanced tab
+  document.getElementById('btn-detect-patterns').addEventListener('click', () => {
+    detectPatterns();
+  });
+  document.getElementById('btn-review-patterns').addEventListener('click', () => {
+    document.getElementById('settings-modal-overlay').classList.add('hidden');
+    openPatternModal();
+  });
+  document.getElementById('btn-backup').addEventListener('click', backupData);
+  document.getElementById('btn-restore').addEventListener('click', () => {
+    document.getElementById('restore-file').click();
+  });
+  document.getElementById('restore-file').addEventListener('change', e => {
+    if (e.target.files[0]) restoreData(e.target.files[0]);
+    e.target.value = '';
+  });
+  document.getElementById('btn-reset-all').addEventListener('click', resetAll);
+
+  // Hash change
+  window.addEventListener('hashchange', () => {
+    const h = parseHash();
+    if (h && (h.week !== currentWeek || h.year !== currentYear)) {
+      currentWeek = h.week;
+      currentYear = h.year;
+      renderAll();
+    }
+  });
+
+  // Keyboard: Escape closes topmost visible modal
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      const overlays = document.querySelectorAll('.pp-modal-overlay:not(.hidden)');
+      if (overlays.length) overlays[overlays.length - 1].classList.add('hidden');
+    }
+  });
+}
+
+/* =============================================================
+   INIT
+============================================================= */
+function init() {
+  seedData();
+
+  // Determine starting week
+  const h = parseHash();
+  if (h) {
+    currentWeek = h.week;
+    currentYear = h.year;
+  } else {
+    const now = getISOWeek(new Date());
+    currentWeek = now.week;
+    currentYear = now.year;
+  }
+
+  initModalClose();
+  initTabs();
+  initConflictsToggle();
+  initEvents();
+  renderAll();
+}
+
+document.addEventListener('DOMContentLoaded', init);
+</script>
+</body>
+</html>

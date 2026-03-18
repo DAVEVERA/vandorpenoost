@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Oostendorp Nieuws Dashboard</title>
+    <script type="module" crossorigin src="/vandorpenoost/nieuws/assets/index-B1brCuVo.js"></script>
+    <link rel="stylesheet" crossorigin href="/vandorpenoost/nieuws/assets/index-BxB47_Te.css">
+    <style>
+      .back-to-site {
+        position: fixed;
+        top: 12px;
+        left: 12px;
+        z-index: 99999;
+        background: rgba(0,0,0,0.45);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        color: #fff;
+        border: 1px solid rgba(255,255,255,0.18);
+        border-radius: 20px;
+        padding: 6px 14px 6px 10px;
+        font-size: 12px;
+        font-family: Arial, sans-serif;
+        font-weight: bold;
+        text-decoration: none;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+        letter-spacing: 0.3px;
+        transition: background 0.2s;
+      }
+      .back-to-site:hover { background: rgba(0,172,169,0.6); }
+    </style>
+  </head>
+  <body>
+    <a href="/vandorpenoost/" class="back-to-site">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M19 12H5M12 5l-7 7 7 7"/></svg>
+      Terug
+    </a>
+    <div id="root"></div>
+  </body>
+</html>

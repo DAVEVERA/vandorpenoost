@@ -857,6 +857,21 @@ input { font-family: var(--font); }
 }
 
 /* ================================================
+   LAUNCH CARD
+   ================================================ */
+.launch-card-wrap { margin-bottom: 36px; }
+.launch-card { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 32px 28px; background: var(--white); display: flex; flex-direction: column; align-items: flex-start; gap: 12px; max-width: 520px; transition: border-color var(--transition), box-shadow var(--transition); }
+.launch-card:hover { border-color: var(--accent); box-shadow: 0 2px 16px rgba(0,172,169,0.08); }
+.launch-card-icon { width: 44px; height: 44px; background: rgba(0,172,169,0.08); border-radius: var(--radius-md); display: flex; align-items: center; justify-content: center; color: var(--accent); flex-shrink: 0; }
+.launch-card-icon svg { width: 22px; height: 22px; }
+.launch-card h2 { font-size: 18px; font-weight: bold; margin: 0; }
+.launch-card p { font-size: 13px; color: var(--muted); line-height: 1.6; margin: 0; }
+.launch-btn { display: inline-flex; align-items: center; gap: 8px; background: var(--black); color: var(--white); font-size: 13px; font-weight: bold; padding: 10px 20px; border-radius: var(--radius); transition: background var(--transition); margin-top: 4px; }
+.launch-btn:hover { background: var(--accent); }
+.launch-btn svg { width: 16px; height: 16px; }
+.launch-hint { font-size: 12px; color: var(--muted-light); font-style: italic; }
+
+/* ================================================
    RESPONSIVE
    ================================================ */
 

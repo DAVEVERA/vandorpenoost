@@ -74,6 +74,7 @@
   }
 
   navItems.forEach(item => {
+    if (item.classList.contains('nav-item-external')) return; // let browser handle full navigation
     item.addEventListener('click', e => {
       e.preventDefault();
       const page = item.dataset.page;

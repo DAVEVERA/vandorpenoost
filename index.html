@@ -38,7 +38,7 @@
       <ul>
 
         <li>
-          <a href="#nieuws" class="nav-item active" data-page="nieuws">
+          <a href="nieuws/" class="nav-item nav-item-external" data-page="nieuws">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <path d="M4 22h16a2 2 0 002-2V7l-5-5H6a2 2 0 00-2 2v2"/>
               <path d="M14 2v4a2 2 0 002 2h4"/>
@@ -49,7 +49,7 @@
         </li>
 
         <li>
-          <a href="#planning" class="nav-item" data-page="planning">
+          <a href="planning.html" class="nav-item nav-item-external" data-page="planning">
             <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
               <rect x="3" y="4" width="18" height="18" rx="2"/>
               <line x1="16" y1="2" x2="16" y2="6"/>
@@ -140,7 +140,7 @@
   <main class="main">
 
     <!-- ==========================================
-         NIEUWS
+         NIEUWS — launch card (full app at nieuws/)
          ========================================== -->
     <section class="page active" id="page-nieuws" aria-label="Nieuws">
 
@@ -149,6 +149,26 @@
         <p class="page-subtitle">Laatste updates en berichten van Oostendorp</p>
       </div>
 
+      <div class="launch-card-wrap">
+        <div class="launch-card">
+          <div class="launch-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 22h16a2 2 0 002-2V7l-5-5H6a2 2 0 00-2 2v2"/>
+              <path d="M14 2v4a2 2 0 002 2h4"/>
+              <path d="M2 15h10M2 11h6M2 19h10"/>
+            </svg>
+          </div>
+          <h2>Nieuws Dashboard</h2>
+          <p>Volledig scherm nieuws display met slideshows, ticker, weer en verkeersinformatie. Inclusief admin beheer voor nieuws en berichten.</p>
+          <a href="nieuws/" class="launch-btn">
+            Open Nieuws Dashboard
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <p class="launch-hint">Tip: klik 3× op de ticker om het beheerpaneel te openen.</p>
+        </div>
+      </div>
+
+      <!-- preview grid kept below launch card -->
       <div class="news-grid">
 
         <article class="news-card featured">
@@ -211,13 +231,33 @@
     </section>
 
     <!-- ==========================================
-         PLANNING
+         PLANNING — launch card (full app at planning.html)
          ========================================== -->
     <section class="page" id="page-planning" aria-label="Planning">
 
       <div class="page-header">
         <h1>Planning</h1>
-        <p class="page-subtitle">Overzicht van activiteiten en afspraken</p>
+        <p class="page-subtitle">PowerPlanner — dienstroosters en teamplanning</p>
+      </div>
+
+      <div class="launch-card-wrap">
+        <div class="launch-card">
+          <div class="launch-card-icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8"  y1="2" x2="8"  y2="6"/>
+              <line x1="3"  y1="10" x2="21" y2="10"/>
+            </svg>
+          </div>
+          <h2>PowerPlanner</h2>
+          <p>Volledig dienstrooster beheer voor het team. Medewerkers, diensten, dagstart rotaties, patroonherkenning, business rules validatie en CSV export.</p>
+          <a href="planning.html" class="launch-btn">
+            Open PowerPlanner
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </a>
+          <p class="launch-hint">Tip: gebruik ⚙️ rechtsonder voor instellingen en medewerkersbeheer.</p>
+        </div>
       </div>
 
       <div class="planning-controls">
