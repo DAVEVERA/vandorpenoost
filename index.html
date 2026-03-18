@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="VanDorpenOost — Oostendorp interne portal">
+  <title>VanDorpenOost — Oostendorp</title>
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- Overlay -->
+  <div class="overlay" id="overlay"></div>
+
+  <!-- ============================================================
+       SIDEBAR
+       ============================================================ -->
+  <aside class="sidebar" id="sidebar" role="navigation" aria-label="Hoofdnavigatie">
+
+    <div class="sidebar-top">
+      <div class="sidebar-logo">
+        <!-- Logo mark -->
+        <svg class="logo-mark" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <circle cx="14" cy="14" r="14" fill="#00ACA9"/>
+          <circle cx="14" cy="14" r="6" fill="#ffffff"/>
+        </svg>
+        <span class="logo-text">oostendorp</span>
+      </div>
+      <button class="sidebar-close" id="sidebarClose" aria-label="Menu sluiten">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true">
+          <line x1="18" y1="6"  x2="6"  y2="18"/>
+          <line x1="6"  y1="6"  x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <nav class="sidebar-nav">
+      <ul>
+
+        <li>
+          <a href="#nieuws" class="nav-item active" data-page="nieuws">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M4 22h16a2 2 0 002-2V7l-5-5H6a2 2 0 00-2 2v2"/>
+              <path d="M14 2v4a2 2 0 002 2h4"/>
+              <path d="M2 15h10M2 11h6M2 19h10"/>
+            </svg>
+            <span>Nieuws</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#planning" class="nav-item" data-page="planning">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <rect x="3" y="4" width="18" height="18" rx="2"/>
+              <line x1="16" y1="2" x2="16" y2="6"/>
+              <line x1="8"  y1="2" x2="8"  y2="6"/>
+              <line x1="3"  y1="10" x2="21" y2="10"/>
+            </svg>
+            <span>Planning</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#rms" class="nav-item" data-page="rms">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <ellipse cx="12" cy="5" rx="9" ry="3"/>
+              <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+              <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+            </svg>
+            <span>RMS</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#performance" class="nav-item" data-page="performance">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="18" y1="20" x2="18" y2="10"/>
+              <line x1="12" y1="20" x2="12" y2="4"/>
+              <line x1="6"  y1="20" x2="6"  y2="14"/>
+              <polyline points="2 20 22 20"/>
+            </svg>
+            <span>Performance</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#roadmap" class="nav-item" data-page="roadmap">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <circle cx="12" cy="12" r="10"/>
+              <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span>Roadmap</span>
+          </a>
+        </li>
+
+        <li>
+          <a href="#askai" class="nav-item" data-page="askai">
+            <svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+            </svg>
+            <span>AskAI</span>
+          </a>
+        </li>
+
+      </ul>
+    </nav>
+
+    <div class="sidebar-bottom">
+      <span class="sidebar-version">VanDorpenOost v1.0</span>
+    </div>
+
+  </aside>
+
+  <!-- ============================================================
+       HEADER
+       ============================================================ -->
+  <header class="header">
+    <button class="hamburger" id="hamburger" aria-label="Menu openen" aria-expanded="false" aria-controls="sidebar">
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+      <span class="hamburger-line"></span>
+    </button>
+
+    <a href="#nieuws" class="header-logo" id="headerLogo" aria-label="Naar startpagina">
+      <svg class="logo-mark" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <circle cx="14" cy="14" r="14" fill="#00ACA9"/>
+        <circle cx="14" cy="14" r="6" fill="#ffffff"/>
+      </svg>
+      <span class="logo-text">oostendorp</span>
+    </a>
+
+    <div class="header-right">
+      <span class="current-page-label" id="currentPageLabel">Nieuws</span>
+    </div>
+  </header>
+
+  <!-- ============================================================
+       MAIN CONTENT
+       ============================================================ -->
+  <main class="main">
+
+    <!-- ==========================================
+         NIEUWS
+         ========================================== -->
+    <section class="page active" id="page-nieuws" aria-label="Nieuws">
+
+      <div class="page-header">
+        <h1>Nieuws</h1>
+        <p class="page-subtitle">Laatste updates en berichten van Oostendorp</p>
+      </div>
+
+      <div class="news-grid">
+
+        <article class="news-card featured">
+          <div class="news-card-meta">
+            <span class="news-tag-label">Uitgelicht</span>
+            <span class="news-date">18 mrt 2026</span>
+          </div>
+          <h2>Nieuw wagenpark voor Q2 2026</h2>
+          <p>Oostendorp breidt het wagenpark uit met 24 nieuwe voertuigen voor het tweede kwartaal. De nieuwe vloot omvat elektrische en hybride modellen, in lijn met onze duurzaamheidsdoelstellingen.</p>
+          <a href="#" class="read-more">Lees meer
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </article>
+
+        <article class="news-card">
+          <div class="news-card-meta">
+            <span class="news-tag-label">Operationeel</span>
+            <span class="news-date">15 mrt 2026</span>
+          </div>
+          <h2>RMS systeem geüpdatet naar v2.1</h2>
+          <p>Het Resource Management Systeem is bijgewerkt met verbeterde rapportagefuncties, een nieuw voertuigdashboard en snellere zoekfilters.</p>
+          <a href="#" class="read-more">Lees meer
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </article>
+
+        <article class="news-card">
+          <div class="news-card-meta">
+            <span class="news-tag-label">Team</span>
+            <span class="news-date">10 mrt 2026</span>
+          </div>
+          <h2>Nieuwe collega's verwelkomd</h2>
+          <p>We verwelkomen drie nieuwe medewerkers bij de afdelingen sales en operations. Ze starten in april en worden begeleid via het onboarding-programma.</p>
+          <a href="#" class="read-more">Lees meer
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </article>
+
+        <article class="news-card">
+          <div class="news-card-meta">
+            <span class="news-tag-label">Sustainability</span>
+            <span class="news-date">5 mrt 2026</span>
+          </div>
+          <h2>CO₂-doelstellingen Q1 gehaald</h2>
+          <p>Onze vloot heeft in het eerste kwartaal de gestelde CO₂-reductiedoelstellingen gehaald. Een mooie mijlpaal richting onze jaarlijkse -20% doelstelling.</p>
+          <a href="#" class="read-more">Lees meer
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M5 12h14M12 5l7 7-7 7"/>
+            </svg>
+          </a>
+        </article>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         PLANNING
+         ========================================== -->
+    <section class="page" id="page-planning" aria-label="Planning">
+
+      <div class="page-header">
+        <h1>Planning</h1>
+        <p class="page-subtitle">Overzicht van activiteiten en afspraken</p>
+      </div>
+
+      <div class="planning-controls">
+        <button class="btn-outline active">Week</button>
+        <button class="btn-outline">Maand</button>
+        <button class="btn-outline">Kwartaal</button>
+      </div>
+
+      <div class="planning-list">
+
+        <div class="planning-day">
+          <div class="planning-day-header">
+            <span class="day-name">Maandag</span>
+            <span class="day-date">18 mrt 2026</span>
+          </div>
+          <div class="planning-events">
+            <div class="event accent">
+              <div class="event-time">09:00 — 10:30</div>
+              <div class="event-content">
+                <div class="event-title">Teamoverleg Operations</div>
+                <div class="event-location">Vergaderzaal A</div>
+              </div>
+            </div>
+            <div class="event">
+              <div class="event-time">13:00 — 14:00</div>
+              <div class="event-content">
+                <div class="event-title">Voertuiginspectie Batch 4</div>
+                <div class="event-location">Garage Noord</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="planning-day">
+          <div class="planning-day-header">
+            <span class="day-name">Dinsdag</span>
+            <span class="day-date">19 mrt 2026</span>
+          </div>
+          <div class="planning-events">
+            <div class="event">
+              <div class="event-time">10:00 — 11:00</div>
+              <div class="event-content">
+                <div class="event-title">Sales Briefing Q2</div>
+                <div class="event-location">Online — Teams</div>
+              </div>
+            </div>
+            <div class="event accent">
+              <div class="event-time">14:30 — 16:00</div>
+              <div class="event-content">
+                <div class="event-title">Leveranciersgesprek — AutoBrands NL</div>
+                <div class="event-location">Showroom</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="planning-day">
+          <div class="planning-day-header">
+            <span class="day-name">Woensdag</span>
+            <span class="day-date">20 mrt 2026</span>
+          </div>
+          <div class="planning-events">
+            <div class="event">
+              <div class="event-time">08:30 — 09:30</div>
+              <div class="event-content">
+                <div class="event-title">Daily Stand-up Team</div>
+                <div class="event-location">Vergaderzaal B</div>
+              </div>
+            </div>
+            <div class="event accent">
+              <div class="event-time">11:00 — 12:00</div>
+              <div class="event-content">
+                <div class="event-title">EV Transitie Review</div>
+                <div class="event-location">Technische Dienst</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="planning-day">
+          <div class="planning-day-header">
+            <span class="day-name">Donderdag</span>
+            <span class="day-date">21 mrt 2026</span>
+          </div>
+          <div class="planning-events">
+            <div class="event accent">
+              <div class="event-time">11:00 — 12:30</div>
+              <div class="event-content">
+                <div class="event-title">Kwartaalreview Finance</div>
+                <div class="event-location">Directiekamer</div>
+              </div>
+            </div>
+            <div class="event">
+              <div class="event-time">15:00 — 16:00</div>
+              <div class="event-content">
+                <div class="event-title">Training EV-onderhoud</div>
+                <div class="event-location">Technische Dienst</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="planning-day">
+          <div class="planning-day-header">
+            <span class="day-name">Vrijdag</span>
+            <span class="day-date">22 mrt 2026</span>
+          </div>
+          <div class="planning-events">
+            <div class="event">
+              <div class="event-time">09:00 — 10:00</div>
+              <div class="event-content">
+                <div class="event-title">Weekafsluiting &amp; Rapportage</div>
+                <div class="event-location">Vergaderzaal A</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         RMS
+         ========================================== -->
+    <section class="page" id="page-rms" aria-label="Resource Management Systeem">
+
+      <div class="page-header">
+        <h1>RMS</h1>
+        <p class="page-subtitle">Resource Management Systeem — vlootoverzicht</p>
+      </div>
+
+      <div class="stats-grid">
+        <div class="stat-card">
+          <div class="stat-label">Totaal voertuigen</div>
+          <div class="stat-value">142</div>
+          <div class="stat-delta up">+8 vs vorige maand</div>
+        </div>
+        <div class="stat-card accent-border">
+          <div class="stat-label">Actief ingezet</div>
+          <div class="stat-value">118</div>
+          <div class="stat-delta up">83% bezettingsgraad</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">In onderhoud</div>
+          <div class="stat-value">14</div>
+          <div class="stat-delta">Gepland</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-label">Beschikbaar</div>
+          <div class="stat-value">10</div>
+          <div class="stat-delta">7% reserve</div>
+        </div>
+      </div>
+
+      <div class="section-title">Voertuigoverzicht</div>
+
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Type</th>
+              <th>Kenteken</th>
+              <th>Status</th>
+              <th>Locatie</th>
+              <th>Km-stand</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>VH-001</td>
+              <td>Elektrisch</td>
+              <td>AB-123-CD</td>
+              <td><span class="status active">Actief</span></td>
+              <td>Amsterdam Noord</td>
+              <td>24.340</td>
+            </tr>
+            <tr>
+              <td>VH-002</td>
+              <td>Hybride</td>
+              <td>EF-456-GH</td>
+              <td><span class="status maintenance">Onderhoud</span></td>
+              <td>Garage Noord</td>
+              <td>87.210</td>
+            </tr>
+            <tr>
+              <td>VH-003</td>
+              <td>Elektrisch</td>
+              <td>IJ-789-KL</td>
+              <td><span class="status active">Actief</span></td>
+              <td>Utrecht</td>
+              <td>12.560</td>
+            </tr>
+            <tr>
+              <td>VH-004</td>
+              <td>Diesel</td>
+              <td>MN-012-OP</td>
+              <td><span class="status available">Beschikbaar</span></td>
+              <td>Hoofdkantoor</td>
+              <td>143.890</td>
+            </tr>
+            <tr>
+              <td>VH-005</td>
+              <td>Elektrisch</td>
+              <td>QR-345-ST</td>
+              <td><span class="status active">Actief</span></td>
+              <td>Rotterdam</td>
+              <td>31.200</td>
+            </tr>
+            <tr>
+              <td>VH-006</td>
+              <td>Hybride</td>
+              <td>UV-678-WX</td>
+              <td><span class="status active">Actief</span></td>
+              <td>Den Haag</td>
+              <td>54.780</td>
+            </tr>
+            <tr>
+              <td>VH-007</td>
+              <td>Elektrisch</td>
+              <td>YZ-901-AB</td>
+              <td><span class="status maintenance">Onderhoud</span></td>
+              <td>Garage Zuid</td>
+              <td>67.440</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <!-- ==========================================
+         PERFORMANCE
+         ========================================== -->
+    <section class="page" id="page-performance" aria-label="Performance">
+
+      <div class="page-header">
+        <h1>Performance</h1>
+        <p class="page-subtitle">KPI's en prestatie-indicatoren</p>
+      </div>
+
+      <div class="kpi-grid">
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">Omzet YTD</span>
+            <span class="kpi-period">2026</span>
+          </div>
+          <div class="kpi-value">€ 2,4M</div>
+          <div class="kpi-bar-wrap"><div class="kpi-bar" style="width:78%"></div></div>
+          <div class="kpi-footer">
+            <span class="kpi-target">Doel: € 3,1M</span>
+            <span class="kpi-pct good">78%</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">Klanttevredenheid</span>
+            <span class="kpi-period">Q1 2026</span>
+          </div>
+          <div class="kpi-value">8,7</div>
+          <div class="kpi-bar-wrap"><div class="kpi-bar" style="width:87%"></div></div>
+          <div class="kpi-footer">
+            <span class="kpi-target">Doel: 8,5</span>
+            <span class="kpi-pct good">+0,2 boven doel</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">Vlootbezetting</span>
+            <span class="kpi-period">Mrt 2026</span>
+          </div>
+          <div class="kpi-value">83%</div>
+          <div class="kpi-bar-wrap"><div class="kpi-bar" style="width:83%"></div></div>
+          <div class="kpi-footer">
+            <span class="kpi-target">Doel: 80%</span>
+            <span class="kpi-pct good">+3%</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">Onderhoudskosten</span>
+            <span class="kpi-period">YTD</span>
+          </div>
+          <div class="kpi-value">€ 48K</div>
+          <div class="kpi-bar-wrap"><div class="kpi-bar over" style="width:96%"></div></div>
+          <div class="kpi-footer">
+            <span class="kpi-target">Budget: € 50K</span>
+            <span class="kpi-pct over">96% — let op</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">CO₂-reductie</span>
+            <span class="kpi-period">vs 2024</span>
+          </div>
+          <div class="kpi-value">−18%</div>
+          <div class="kpi-bar-wrap"><div class="kpi-bar" style="width:90%"></div></div>
+          <div class="kpi-footer">
+            <span class="kpi-target">Doel: −20%</span>
+            <span class="kpi-pct good">90% op koers</span>
+          </div>
+        </div>
+
+        <div class="kpi-card">
+          <div class="kpi-header">
+            <span class="kpi-label">Responstijd meldingen</span>
+            <span class="kpi-period">Mrt 2026</span>
+          </div>
+          <div class="kpi-value">2,3 u</div>
+          <div class="kpi-bar-wrap"><div class="kpi-bar" style="width:92%"></div></div>
+          <div class="kpi-footer">
+            <span class="kpi-target">Doel: &lt; 2,5 u</span>
+            <span class="kpi-pct good">On track</span>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         ROADMAP
+         ========================================== -->
+    <section class="page" id="page-roadmap" aria-label="Roadmap">
+
+      <div class="page-header">
+        <h1>Roadmap</h1>
+        <p class="page-subtitle">Strategische planning en mijlpalen 2026</p>
+      </div>
+
+      <div class="roadmap-legend">
+        <span class="legend-item"><span class="legend-dot done"></span>Afgerond</span>
+        <span class="legend-item"><span class="legend-dot progress"></span>In uitvoering</span>
+        <span class="legend-item"><span class="legend-dot planned"></span>Gepland</span>
+      </div>
+
+      <div class="roadmap-timeline">
+
+        <!-- Q1 -->
+        <div class="roadmap-quarter">
+          <div class="quarter-label">Q1 2026</div>
+          <div class="roadmap-items">
+
+            <div class="roadmap-item done">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <div class="roadmap-title">RMS lancering v2.0</div>
+                <div class="roadmap-desc">Nieuw resource management platform live met verbeterd dashboard en rapportage.</div>
+                <span class="roadmap-tag">Systemen</span>
+              </div>
+            </div>
+
+            <div class="roadmap-item done">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <div class="roadmap-title">CO₂-rapportage geautomatiseerd</div>
+                <div class="roadmap-desc">Automatische maandelijkse rapportage voor duurzaamheidsdoelstellingen.</div>
+                <span class="roadmap-tag">Sustainability</span>
+              </div>
+            </div>
+
+            <div class="roadmap-item done">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <div class="roadmap-title">Vlootuitbreiding +24 voertuigen</div>
+                <div class="roadmap-desc">Order geplaatst, levering verwacht Q2 2026.</div>
+                <span class="roadmap-tag">Vloot</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Q2 -->
+        <div class="roadmap-quarter">
+          <div class="quarter-label">Q2 2026</div>
+          <div class="roadmap-items">
+
+            <div class="roadmap-item progress">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <div class="roadmap-title">EV Transitie Fase 2</div>
+                <div class="roadmap-desc">35% van de vloot elektrificeren — in uitvoering samen met HR en TD.</div>
+                <span class="roadmap-tag">Sustainability</span>
+              </div>
+            </div>
+
+            <div class="roadmap-item progress">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <div class="roadmap-title">Klantportaal launch</div>
+                <div class="roadmap-desc">Self-service portal voor klanten — build fase afgerond, acceptatietests lopen.</div>
+                <span class="roadmap-tag">Digitaal</span>
+              </div>
+            </div>
+
+            <div class="roadmap-item planned">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <div class="roadmap-title">Opening vestiging Almere</div>
+                <div class="roadmap-desc">Verwachte opening juni 2026 — vergunningen in behandeling.</div>
+                <span class="roadmap-tag">Groei</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Q3 -->
+        <div class="roadmap-quarter">
+          <div class="quarter-label">Q3 2026</div>
+          <div class="roadmap-items">
+
+            <div class="roadmap-item planned">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <div class="roadmap-title">AI-gestuurde planningsmodule</div>
+                <div class="roadmap-desc">Predictieve planning op basis van historische bezettingsdata.</div>
+                <span class="roadmap-tag">AI &amp; Data</span>
+              </div>
+            </div>
+
+            <div class="roadmap-item planned">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <div class="roadmap-title">ISO 14001 Certificering</div>
+                <div class="roadmap-desc">Externe audit gepland voor september 2026.</div>
+                <span class="roadmap-tag">Compliance</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- Q4 -->
+        <div class="roadmap-quarter">
+          <div class="quarter-label">Q4 2026</div>
+          <div class="roadmap-items">
+
+            <div class="roadmap-item planned">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <div class="roadmap-title">Volledig cashless operaties</div>
+                <div class="roadmap-desc">100% digitale betalingsverwerking voor alle vestigingen.</div>
+                <span class="roadmap-tag">Digitaal</span>
+              </div>
+            </div>
+
+            <div class="roadmap-item planned">
+              <div class="roadmap-dot"></div>
+              <div class="roadmap-content">
+                <div class="roadmap-title">Jaarreview &amp; 2027 Strategie</div>
+                <div class="roadmap-desc">Directiesessie voor jaarlijkse evaluatie en strategische planning.</div>
+                <span class="roadmap-tag">Strategie</span>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ==========================================
+         ASKAI
+         ========================================== -->
+    <section class="page" id="page-askai" aria-label="AskAI">
+
+      <div class="page-header">
+        <h1>AskAI</h1>
+        <p class="page-subtitle">Stel een vraag aan de AI-assistent van Oostendorp</p>
+      </div>
+
+      <div class="chat-container">
+
+        <div class="chat-messages" id="chatMessages">
+          <div class="chat-message assistant">
+            <div class="msg-avatar">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>
+              </svg>
+            </div>
+            <div class="msg-content">
+              <p>Goedemiddag. Ik ben de AI-assistent van Oostendorp. U kunt mij vragen stellen over de vloot, planning, KPI's, de roadmap of andere operationele onderwerpen.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="chat-suggestions">
+          <button class="chip" onclick="askQuestion('Hoeveel voertuigen zijn er momenteel actief?')">Actieve voertuigen</button>
+          <button class="chip" onclick="askQuestion('Wat zijn de KPI-doelstellingen voor dit kwartaal?')">KPI's Q2</button>
+          <button class="chip" onclick="askQuestion('Wanneer is de volgende geplande levering?')">Volgende levering</button>
+          <button class="chip" onclick="askQuestion('Geef een samenvatting van de roadmap.')">Roadmap samenvatting</button>
+          <button class="chip" onclick="askQuestion('Hoeveel voertuigen staan in onderhoud?')">Onderhoud status</button>
+        </div>
+
+        <div class="chat-input-area">
+          <input
+            type="text"
+            class="chat-input"
+            id="chatInput"
+            placeholder="Stel uw vraag..."
+            autocomplete="off"
+            aria-label="Vraag invoeren"
+          >
+          <button class="chat-send" id="chatSend" aria-label="Versturen">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <line x1="22" y1="2" x2="11" y2="13"/>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"/>
+            </svg>
+          </button>
+        </div>
+
+      </div>
+    </section>
+
+  </main>
+
+  <script src="js/main.js"></script>
+</body>
+</html>
